@@ -23,21 +23,23 @@ Para ejecutar el prototipo se requiere contar con los siguientes componentes ins
 * Visual Studio 2022 o superior.
 * .NET SDK compatible con la versión del proyecto.
 * SQL Server o SQL Server Express.
-* SQL Server Management Studio, para crear y administrar la base de datos.
+* SQL Server Management Studio, para restaurar o importar la base de datos.
 * Git, en caso de clonar el repositorio desde GitHub.
 
-Además, es necesario contar con una base de datos creada en SQL Server y configurar correctamente la cadena de conexión en el archivo `appsettings.json`.
-
+El sistema utiliza una base de datos SQL Server, la cual se incluye dentro del material del repositorio para facilitar la ejecución del prototipo con datos de prueba, usuarios, roles, no conformidades, fichas técnicas, equipos y demás información necesaria para verificar el funcionamiento general del sistema.
 
 ## Configuración inicial
 
 1. Clonar o descargar el repositorio.
 2. Abrir la solución del proyecto desde Visual Studio.
-3. Configurar la cadena de conexión a la base de datos en el archivo `appsettings.json`.
-4. Crear la base de datos en SQL Server.
-5. Ejecutar las migraciones de Entity Framework, si corresponde.
-6. Compilar la solución.
-7. Ejecutar el proyecto desde Visual Studio.
+3. Abrir SQL Server Management Studio.
+4. Restaurar o ejecutar el archivo de base de datos incluido en la carpeta `database`.
+5. Verificar el nombre de la base de datos creada en SQL Server.
+6. Configurar la cadena de conexión en el archivo `appsettings.json`, indicando el servidor local y el nombre de la base de datos restaurada.
+7. Compilar la solución desde Visual Studio.
+8. Ejecutar el proyecto.
+
+Una vez realizada esta configuración, el sistema podrá ejecutarse utilizando la información precargada en la base de datos incluida en el repositorio.
 
 ## Funcionalidades principales
 
@@ -51,6 +53,13 @@ Además, es necesario contar con una base de datos creada en SQL Server y config
 * Control de estados del proceso.
 * Visualización de indicadores y tablero de seguimiento.
 
+## Base de datos
+
+El repositorio incluye una base de datos de prueba con información precargada para facilitar la revisión del prototipo. Esta base contiene usuarios, roles, equipos de trabajo, no conformidades, fichas técnicas, tareas y estados necesarios para verificar las principales funcionalidades del sistema.
+
+La base de datos debe restaurarse o importarse en SQL Server antes de ejecutar la aplicación. Luego, se debe actualizar la cadena de conexión del archivo `appsettings.json` para que apunte a la base restaurada.
+
+
 ## Roles del sistema
 
 El sistema contempla usuarios con rol general de supervisor o empleado. Además, dentro de los equipos de trabajo se diferencian los roles de piloto y auditor.
@@ -63,7 +72,7 @@ El empleado participa en las fichas técnicas asignadas según su rol dentro del
 
 El repositorio forma parte de la entrega final del prototipado tecnológico. Se incluye el código fuente del sistema y el material necesario para su revisión.
 
-Video demostrativo: [agregar enlace al video]
+Video demostrativo: //ENLACE
 
 ## Autor
 
