@@ -23,8 +23,11 @@ Para ejecutar el prototipo se requiere contar con los siguientes componentes ins
 * Visual Studio 2022 o superior.
 * .NET SDK compatible con la versión del proyecto.
 * SQL Server o SQL Server Express.
-* SQL Server Management Studio.
+* SQL Server Management Studio, para crear y administrar la base de datos.
 * Git, en caso de clonar el repositorio desde GitHub.
+
+Además, es necesario contar con una base de datos creada en SQL Server y configurar correctamente la cadena de conexión en el archivo `appsettings.json`.
+
 
 ## Configuración inicial
 
