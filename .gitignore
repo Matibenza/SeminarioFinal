@@ -1,0 +1,22 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+
+# Archivos comprimidos / backups
+*.rar
+*.zip
+*.bak
+!database/SeminarioFinal.bak
+*.sql
+
+# Archivos de usuario de Visual Studio
+*.csproj.user
+*.suo
+*.user
+
+# Archivo accidental
+git reset --hard 8544781
+
+# Si ese archivo "Tesis" no es parte del código, ignorarlo
+Tesis

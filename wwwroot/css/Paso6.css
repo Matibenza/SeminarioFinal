@@ -1,0 +1,296 @@
+﻿.titulo-verificacion,
+.titulo-corrida {
+    color: #A95DF0;
+    font-weight: bold;
+}
+
+#modalVerificacionEfectividad .modal-content {
+    background-color: #141724;
+    border-radius: 1.25rem;
+    color: #fff;
+    padding: 1.5rem;
+    border: none;
+}
+
+#modalVerificacionEfectividad .modal-header {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+#modalVerificacionEfectividad .modal-footer {
+    border-top: none !important;
+}
+
+
+
+/* ─── Botón + Agregar ─── */
+.btn-outline-primary {
+    border-color: #48007B;
+    color: #48007B;
+}
+
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus {
+        background-color: #48007B;
+        color: #FFF;
+    }
+
+.btn-check + .btn-outline-primary {
+    background: none;
+    color: #FFF;
+    border: 1px solid #444A5A;
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background-color: #6B1FBF;
+    color: #FFF;
+    border-color: transparent;
+}
+
+#modalVerificacionEfectividad textarea.form-control,
+#modalVerificacionEfectividad select.form-select,
+#modalVerificacionEfectividad input.form-control {
+    background-color: #1C202C;
+    color: #fff;
+    border: 1px solid #343A40;
+    border-radius: 0.25rem;
+}
+
+    #modalVerificacionEfectividad textarea.form-control:focus,
+    #modalVerificacionEfectividad select.form-select:focus,
+    #modalVerificacionEfectividad input.form-control:focus {
+        border-color: #48007B;
+        box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25);
+        background-color: #1C202C;
+        color: #fff;
+    }
+
+.toggle-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 0.5rem;
+    border: 1px solid #444A5A;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.toggle-opcion {
+    padding: 0.5rem 1rem;
+    background-color: #1C202C;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn-check:checked + .toggle-opcion {
+    background-color: #6B1FBF;
+    color: #fff;
+}
+
+.toggle-opcion:hover {
+    background-color: #33394A;
+}
+
+.btn-violeta {
+    background-color: #6B1FBF; /* o #48007B si querés más oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+    width: 100%;
+    text-transform: uppercase;
+    transition: background 0.3s ease;
+}
+
+    .btn-violeta:hover {
+        background: #48007B;
+        color: #fff;
+    }
+
+/* cuando agreguemos la clase .modal-blurred al modal de verificación, 
+   su contenido se desenfoca */
+#modalVerificacionEfectividad.modal-blurred .modal-content {
+    filter: blur(4px);
+    transition: filter 0.2s ease;
+}
+
+/* Quita el borde de las tarjetas de verificación */
+#lista-verificacion .list-group-item {
+    border: none;
+    /* si aún se ve una línea fina, fuerza con !important */
+    /* border: none !important; */
+}
+
+/* Apunta sólo a los ítems dentro de lista-verificacion */
+#lista-verificacion .list-group-item {
+    background-color: #1F2130 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* que el dropdown de Choices quede por encima de todo */
+#modalVerificacionEfectividad .choices__list--dropdown {
+    position: absolute;
+    z-index: 2000; /* o cualquier número mayor que el z-index de tus toggles */
+}
+
+.text-muted {
+    color: #6c757d !important; /* o el color que prefieras */
+}
+
+/* Copia exacta de los estilos de #modalVerificacionEfectividad,
+   pero apuntando a #modalCorrida: */
+
+#modalCorrida .modal-content {
+    background-color: #141724;
+    border-radius: 1.25rem;
+    color: #fff;
+    padding: 1.5rem;
+    border: none;
+}
+
+#modalCorrida .modal-header {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+#modalCorrida .modal-footer {
+    border-top: none !important;
+}
+
+#modalCorrida textarea.form-control,
+#modalCorrida select.form-select,
+#modalCorrida input.form-control {
+    background-color: #1C202C;
+    color: #fff;
+    border: 1px solid #343A40;
+    border-radius: 0.25rem;
+}
+
+    #modalCorrida textarea.form-control:focus,
+    #modalCorrida select.form-select:focus,
+    #modalCorrida input.form-control:focus {
+        border-color: #48007B;
+        box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25);
+        background-color: #1C202C;
+        color: #fff;
+    }
+
+/* Textboxes (inputs, selects, textareas) */
+input.form-control,
+select.form-select,
+textarea.form-control {
+    background-color: #1C202C !important;
+    color: #fff; /* texto blanco para contraste */
+    border-color: #343A40; /* mismo borde oscuro que usas */
+}
+
+/* Si usas Choices.js */
+.modal-content-dark .choices__inner,
+.modal-content-dark .choices__list--dropdown {
+    background-color: #1C202C !important;
+}
+
+
+/* Inputs de fecha / number con flechitas */
+input[type="date"],
+input[type="number"] {
+    background-color: #1C202C !important;
+    color: #fff;
+    border-color: #343A40 !important;
+}
+
+/* Opcional: placeholders en gris claro */
+input::placeholder,
+textarea::placeholder {
+    color: #6c757d !important;
+}
+
+#nivelConformidad {
+    color: #A95DF0 !important;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.form-eliminar-verif {
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+/* ─── Ítems de Corrida igual que Verificaciones ─── */
+#lista-corrida .list-group-item {
+    background-color: #1F2130 !important; /* mismo fondo */
+    border: none !important; /* sin bordes */
+    box-shadow: none !important; /* sin sombra */
+    color: #fff; /* texto blanco */
+    border-radius: 1rem; /* bordes redondeados */
+    margin-bottom: 0.5rem; /* separación vertical */
+    padding: 0.75rem 1rem; /* mismo padding */
+}
+
+    /* Texto destacado igual que en verificaciones */
+    #lista-corrida .list-group-item .fw-semibold {
+        font-weight: 600;
+    }
+
+    /* Fechas y subtítulos en gris claro */
+    #lista-corrida .list-group-item .text-muted {
+        color: #6c757d !important;
+    }
+
+    /* Flex para alinear contenido igual que en verificaciones */
+    #lista-corrida .list-group-item > .d-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+.form-eliminar-corrida {
+    display: flex;
+    align-items: center;
+}
+
+#btnAgregarCorrida:disabled {
+    background-color: #6c757d !important; /* gris Bootstrap */
+    color: #fff !important;
+    border-color: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* Estilo oscuro unificado para ambos modales de confirmación */
+#modalConfirmarEliminarVerif .modal-content,
+#modalConfirmarEliminarCorrida .modal-content {
+    background: #141724 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 1.25rem !important;
+}
+
+#modalConfirmarEliminarVerif .modal-header,
+#modalConfirmarEliminarVerif .modal-footer,
+#modalConfirmarEliminarCorrida .modal-header,
+#modalConfirmarEliminarCorrida .modal-footer {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Botón cerrar blanco (si Bootstrap no te lo da) */
+.btn-close-white {
+    filter: invert(1);
+}
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+}

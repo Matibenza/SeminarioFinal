@@ -1,0 +1,619 @@
+﻿.paso0-page {
+    background-color: #1C202C;
+    color: #FFFFFF;
+    padding: 1rem;
+    min-height: 100vh;
+}
+
+/* Barra de pasos */
+.steps-bar {
+    display: flex;
+    background-color: #141724;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+    .steps-bar .step {
+        flex: 1;
+        text-align: center;
+        padding: 0.75rem 0;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .steps-bar .step-active {
+        color: #FFFFFF;
+    }
+
+        .steps-bar .step-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #48007B;
+        }
+
+/* Contenedor del paso */
+.paso0-content {
+    background-color: #141724;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Header */
+.paso0-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.paso0-timer {
+    text-align: center;
+}
+
+.paso0-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.paso0-timer span {
+    display: block;
+}
+
+.timer-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #FF0000;
+}
+
+.paso0-timer .timer-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #FF0000; /* rojo */
+}
+
+/* Separador */
+.hr-violeta {
+    border: none;
+    height: 2px;
+    background-color: #48007B;
+    margin: 1rem 0;
+}
+
+/* ─── Listas dinámicas ─── */
+.list-group {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.list-group-item {
+    background-color: #1F2130;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    /* Botón eliminar dentro de cada ítem */
+    .list-group-item .btn-danger {
+        background: transparent;
+        border: none;
+        color: #FF4D4F;
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0;
+        cursor: pointer;
+    }
+
+/* ─── Botón + Agregar ─── */
+.btn-outline-primary {
+    border-color: #48007B;
+    color: #48007B;
+}
+
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus {
+        background-color: #48007B;
+        color: #FFF;
+    }
+
+/* ─── Modal de Causa ─── */
+/* Fondo y bordes */
+.modal-content {
+    background: #141724 !important;
+    border-radius: 1.25rem;
+    color: #fff !important;
+}
+
+/* Header */
+.modal-header {
+    border-bottom: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+    background: transparent;
+}
+
+/* Título */
+.modal-title {
+    color: #fff !important;
+    font-weight: 700;
+}
+
+/* Cuerpo del modal */
+.modal-body {
+    color: #fff !important;
+    font-size: 1.09rem;
+    text-align: center;
+}
+
+/* Botones del pie */
+.modal-footer .btn {
+    background-color: #1C123F !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 0.7rem;
+    font-weight: 600;
+    min-width: 110px;
+}
+
+    .modal-footer .btn:hover {
+        background-color: #2a1d5a !important;
+    }
+
+/* Fondo oscuro del backdrop */
+.modal-backdrop.show {
+    opacity: 0.8 !important;
+}
+
+/* Separador violeta del modal */
+.hr-violeta-modal {
+    border: none;
+    border-top: 2px solid #8854f5;
+    margin: 0 0 1.2rem 0;
+    width: 100%;
+}
+
+/* Quitar separador extra */
+.modal-content > .modal-footer {
+    border-top: 0 !important;
+}
+
+
+
+/* ─── Bottom wrapper (copiado de Paso1) ─── */
+.bottom-wrapper {
+    background-color: #1F2130;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.dates-row,
+.combo-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.date-field,
+.combo-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-input,
+.form-select,
+.form-control {
+    background-color: #1C202C;
+    color: #FFF;
+    border: 1px solid #343A40;
+}
+
+    .date-input.readonly-field {
+        cursor: default;
+    }
+
+/* ─── Form Actions ─── */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-custom-secondary {
+    background-color: #343A40;
+    color: #FFF;
+    border: none;
+}
+
+btn-custom-gradient {
+    background-color: #48007B;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+    cursor: pointer;
+}
+
+.no-permitido {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── Radios como botones ─── */
+.btn-check + .btn-outline-primary {
+    color: #FFF;
+    border-color: #343A40;
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+    border-color: transparent;
+    color: #FFF;
+}
+
+/* ------------------------- */
+/* Bottom wrapper: dos filas */
+/* ------------------------- */
+.bottom-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    background-color: #141724;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* --- Fila de fechas --- */
+.dates-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+    .date-field label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+
+.date-input {
+    background-color: #141724;
+    border: 1px solid #444A5A;
+    border-radius: 4px;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+    color: #fff;
+    width: 100%;
+}
+
+.readonly-field {
+    color: #666 !important;
+    pointer-events: none;
+}
+
+/* --------------------------- */
+/* Fila de responsable/estado  */
+/* --------------------------- */
+.combo-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.combo-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+    .combo-field label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+
+/* ------------------ */
+/* Botones de acción  */
+/* ------------------ */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-custom-gradient,
+.btn-custom-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-width: 8rem;
+    border-radius: 0.375rem;
+    text-align: center;
+}
+
+/* degradado morado */
+.btn-custom-gradient {
+    background-color: #48007B;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+    cursor: pointer;
+}
+
+    .btn-custom-gradient:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+    }
+
+/* secundario gris */
+.btn-custom-secondary {
+    background-color: #444A5A;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+    .btn-custom-secondary:hover {
+        background-color: #555E6C;
+    }
+
+/* estado “no permitido” */
+.no-permitido {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.estado-pendiente {
+    background: linear-gradient(90deg, #FFC700, #FFA500) !important;
+}
+
+.estado-en-progreso {
+    background: linear-gradient(90deg, #FF0080, #FF00FF) !important;
+}
+
+/* Ahora Completado = verde */
+.estado-completado {
+    background: linear-gradient(90deg, #00C851, #007E33) !important;
+}
+
+/* Ahora Terminado = gris */
+.estado-terminado {
+    background: linear-gradient(90deg, #888888, #555555) !important;
+}
+
+.date-input:focus,
+.form-select:focus,
+.form-control:focus,
+.choices__inner.is-focused {
+    outline: none;
+    border-color: #48007B !important;
+    box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25) !important;
+}
+
+.btn-outline-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25);
+    border-color: #48007B;
+}
+
+/* ──────────────── */
+/* Hover / Selected  */
+/* Degradado igual al Paso 1 */
+/* ──────────────── */
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    color: #ffffff !important;
+}
+
+/* Ítems seleccionados normales, sin degradado */
+.choices__list--dropdown .choices__item--selectable.is-selected {
+    background-color: #1C202C !important;
+    color: #ffffff !important;
+}
+
+/* Fondo del select cuando está cerrado */
+.choices__inner {
+    background-color: #141724 !important;
+    border-color: #444A5A !important;
+}
+
+/* Fondo de la lista desplegable */
+.choices__list--dropdown {
+    background-color: #141724 !important;
+    border-color: #444A5A !important;
+}
+
+/* Fondo del ítem seleccionado en single-select (cuando el select está cerrado) */
+.choices__list--single .choices__item {
+    background-color: #141724 !important;
+}
+
+/* Texto de las opciones */
+.choices__list--dropdown .choices__item--selectable {
+    color: #FFFFFF !important;
+}
+
+/* Placeholder en el select cerrado */
+.choices__list--single .choices__placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+
+/* Radios “botón” aislados */
+. input.btn-check + label.btn-outline-primary {
+    background: none !important;
+    color: #FFFFFF !important;
+    border: 0px solid #141724 !important;
+}
+
+/* Al hacer hover sobre esos radios */
+input.btn-check + label.btn-outline-primary:hover {
+    background: none !important;
+    color: #FFFFFF !important;
+    border-color: #6B1FBF !important;
+}
+
+/* Solo cuando el radio está checked */
+input.btn-check:checked + label.btn-outline-primary {
+    background: #6B1FBF !important; /* tu violeta sólido */
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+}
+
+/* Foco: solo outline violeta */
+input.btn-check:focus + label.btn-outline-primary,
+input.btn-check + label.btn-outline-primary:focus {
+ 
+    outline-offset: 2px !important;
+}
+
+
+input.btn-check + label.btn-outline-primary {
+    border: none !important;
+}
+
+
+input.btn-check:checked + label.btn-outline-primary {
+    border: none !important;
+}
+
+.mb-3 > .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Flex en cada grupo de radios, con botones de igual tamaño */
+.mb-3 .btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+    .mb-3 .btn-group > .btn-check + .btn-outline-primary {
+        flex: 1; /* ancho igual para todos */
+        text-align: center; /* centra el texto */
+        padding: 0.5rem 0; /* altura uniforme */
+    }
+
+
+
+/* ───────────────────────────── */
+/* Estilo de inputs en modal     */
+/* ───────────────────────────── */
+
+/* Color de fondo correcto para textarea y selects */
+textarea.form-control,
+select.form-select,
+input.form-control {
+    background-color: #1C202C !important;
+    color: #FFF !important;
+    border: 1px solid #343A40 !important;
+    border-radius: 0.25rem;
+    resize: vertical;
+}
+
+    /* Focus violeta para todos los campos del modal */
+    textarea.form-control:focus,
+    select.form-select:focus,
+    input.form-control:focus {
+        outline: none;
+        border-color: #48007B !important;
+        box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25) !important;
+        background-color: #1C202C !important;
+        color: #FFF !important;
+    }
+
+/* Blur general para cuando se muestre el modal */
+body.modal-blur .paso0-content {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.2s ease;
+}
+
+#modalCausa .modal-footer {
+    border-top: none !important;
+}
+
+.causa-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .causa-item:hover {
+        background-color: #26283A; /* un tono apenas más claro para dar feedback */
+    }
+
+.btn-eliminar-causa {
+    border: 1px solid #6B1FBF !important; /* violeta sólido */
+    color: #fff !important;
+    background-color: transparent;
+    padding: 0.25rem 0.4rem;
+    border-radius: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+    .btn-eliminar-causa:hover {
+        background-color: #6B1FBF !important;
+        color: white !important;
+    }
+
+.titulo-categoria-causa {
+    color: #B28AFF !important; /* violeta consistente */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.modal-body .form-label {
+    text-align: left !important;
+    display: block;
+}
+
+.choices__inner.estado-pendiente .choices__item,
+.choices__inner.estado-en-progreso .choices__item,
+.choices__inner.estado-completado .choices__item,
+.choices__inner.estado-terminado .choices__item {
+    background: inherit !important; 
+    color: white !important;
+    font-weight: bold;
+    text-align: center;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+    background-color: #141724 !important;
+    color: white !important;
+}
+
+    /* Esto pisa el color más claro que viene por defecto para la opción seleccionada */
+    .choices__list--dropdown .choices__item--selectable.is-selected {
+        background-color: #141724 !important;
+    }
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.2s ease;
+}

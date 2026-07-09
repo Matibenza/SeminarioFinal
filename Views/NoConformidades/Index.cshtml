@@ -1,0 +1,208 @@
+@model IEnumerable<TesisPractica.Models.NoConformidad>
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "No Conformidades";
+
+    // Tomamos los valores de la query (si existen)
+    var selectedIdCliente = ViewContext.HttpContext.Request.Query["idCliente"].ToString();
+    var selectedFecha = ViewContext.HttpContext.Request.Query["fecha"].ToString();
+}
+
+<!-- CSS y JS de Choices.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/no-conformidades.css" asp-append-version="true" />
+
+<div class="container-fluid p-4" style="min-height: 100vh; background-color: #212529;">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="text-white mb-0">Panel de Información</h1>
+        </div>
+    </div>
+
+
+    <form method="get" asp-controller="NoConformidades" asp-action="Index" class="row g-3 align-items-end mb-4">
+        <!-- Filtro por cliente -->
+        <div class="col-12 col-md-5">
+            <label for="cliente" class="form-label text-white">Filtrar por cliente:</label>
+            <select id="idCliente" name="idCliente" class="form-select custom-uniform" onchange="this.form.submit()">
+                <option value="">-- Todos los clientes --</option>
+                @if (ViewBag.Clientes != null)
+                {
+                    foreach (var cliente in ViewBag.Clientes)
+                    {
+                        if (selectedIdCliente == cliente.IdCliente.ToString())
+                        {
+                            <option value="@cliente.IdCliente" selected>@cliente.Nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@cliente.IdCliente">@cliente.Nombre</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Filtro por fecha -->
+        <div class="col-12 col-md-5">
+            <label for="fecha" class="form-label text-white">Fecha:</label>
+            <div class="input-group">
+                <input type="date" class="form-control custom-uniform" id="fecha" name="fecha" value="@selectedFecha" onchange="this.form.submit()" />
+                <span class="input-group-text" style="background-color: #212529; border: none;">
+                    <i class="fas fa-calendar-alt"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-2 d-grid">
+            <a href="@Url.Action("Index", "NoConformidades")" class="btn btn-custom-gradient">
+                Quitar filtros
+            </a>
+        </div>
+     
+
+
+    </form>
+
+    @if (Convert.ToString(ViewBag.RolUsuario) == "supervisor")
+    {
+        <div class="mb-5 p-4" style="background-color: #141724; border-radius: 8px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-white mb-0">No Conformidades</h2>
+                <button class="btn btn-custom-gradient" onclick="location.href='@Url.Action("Create", "NoConformidades")'">
+                    Crear
+                </button>
+            </div>
+            <div class="row g-3 mt-2">
+                @if (!Model.Any())
+                {
+                    <div class="col-12">
+                        <div style="background-color: #141724; color: #fff; padding: 1rem; border-radius: 0.5rem;">
+                            No hay conformidades.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var nc in Model)
+                    {
+                        <div class="col-sm-3">
+                            <!-- Tarjeta clicable: se inyecta el id de la NC y se llama a abrirDetalleNoConf -->
+                            <div class="no-conf-card" data-id="@nc.IdNoConformidad" style="cursor: pointer;" onclick="abrirDetalleNoConf(@nc.IdNoConformidad)">
+                                <h5>NC - @nc.IdNoConformidad</h5>
+                                <p class="descripcion-no-conf">@nc.Descripcion</p>
+                                <small>@nc.FechaIncidente.ToString("dd/MM/yyyy")</small>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+    <div class="mb-5 p-4" style="background-color: #141724; border-radius: 8px;">
+        <h2 class="text-white">Fichas Técnicas</h2>
+        <div class="row g-3 mt-2">
+            @if (ViewBag.FichasTecnicas is IEnumerable<TesisPractica.Models.FichaTecnica> fichas && fichas.Any())
+            {
+                foreach (var ft in fichas)
+                {
+                    <div class="col-sm-3">
+                        <div class="fichas-card" onclick="irAFichaTecnica(@ft.IdFichaTecnica)" style="cursor:pointer;">
+                            <h5>FT - @ft.IdFichaTecnica</h5>
+                            <p>NC - @ft.NoConformidad.IdNoConformidad</p>
+                            <small>@ft.FechaCreacion.ToString("dd/MM/yyyy")</small>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div style="background-color: #141724; color: #fff; padding: 1rem; border-radius: 0.5rem;">
+                        No hay fichas técnicas.
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+<!-- Modal para Detalle de No Conformidad -->
+<div class="modal fade" id="modalDetalleNoConf" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content text-center" id="detalleModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de No Conformidad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="contenidoDetalleNoConf">
+                <!-- La información se inyectará aquí vía AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn  btn-custom-gradient" data-bs-dismiss="modal">Aceptar</button>
+                <button class="btn btn-custom-gradient" onclick="editarNoConformidad()">Editar</button>
+                <button class="btn btn-custom-gradient" onclick="abrirReasignarModal()">Reasignar</button>
+                <button class="btn boton-rojo" onclick="confirmarEliminacion()">Eliminar</button>
+         
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border border-warning">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="mensajeConfirmacionEliminar">
+                ¿Está seguro que desea eliminar la No Conformidad <strong>#ID</strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cancelar" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn boton-rojo" id="btnConfirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reasignar -->
+<div class="modal fade" id="modalReasignar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border border-warning" id="reasignarModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">
+                    <i class="bi bi-person-fill-gear"></i> Reasignar No Conformidad
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <label for="selectSupervisor" class="form-label">Usuario</label>
+                <select id="selectSupervisor" class="form-select custom-uniform">
+                    <option value="">Seleccione un supervisor</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-cancelar" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn btn-custom-gradient" id="btnConfirmarReasignar">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Script para abrir el modal con detalles vía AJAX -->
+<script>
+    var detalleNoConfUrl = '@Url.Action("Detalle", "NoConformidades")';
+    console.log("detalleNoConfUrl =", detalleNoConfUrl);
+</script>
+<script src="~/js/noConformidad.js"></script>

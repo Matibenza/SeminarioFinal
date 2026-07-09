@@ -1,0 +1,371 @@
+@model TesisPractica.ViewModels.NoConformidadCreateViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Crear No Conformidad";
+}
+
+<!-- Estilos y scripts -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/CrearNoConformidad.css" asp-append-version="true" />
+
+
+@if (Model.IdNoConformidad > 0)
+{
+    <button type="button" class="btn btn-light crear-btnt btn-volver" onclick="volverADetalle()">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+}
+
+
+
+<h2 class="text-white mb-4 titulo-no-conf">No Conformidad - OPL</h2>
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<div id="contenedorNoConformidad" class="p-4 mb-4 rounded">
+    <!-- Parte superior: Información general -->
+    <div class="row align-items-center mb-3">
+        <div class="col-4">
+            <label class="form-label text-white">Cliente</label>
+            <select asp-for="IdCliente" class="form-select" id="selectCliente">
+                <option value="" disabled selected>-- Seleccione --</option>
+                @if (Model.ListaClientes != null)
+                {
+                    foreach (var cliente in Model.ListaClientes)
+                    {
+                        <option value="@cliente.IdCliente">@cliente.Nombre</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-4">
+            <label class="form-label text-white">Responsable</label>
+            <input type="text" class="form-control responsable-input" value="@User.Identity.Name" readonly />
+        </div>
+        <div class="col-4 text-end fondo-violeta">
+            <label class="form-label text-white d-block">No. Conformidad</label>
+            <h3 class="text-white mb-0">FCA-@(Model.IdNoConformidad ?? 0)</h3>
+        </div>
+    </div>
+
+    <hr class="my-3" />
+
+    <!-- Formulario sin asp-action/asp-controller -->
+    <form id="formCrearNoConformidad" method="post">
+        
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="currentNoConfId" value="@Model.IdNoConformidad" />
+       @* ¡Sólo si estamos editando!*@
+          @if (Model.IdNoConformidad > 0) {
+            <input type="hidden" asp-for="IdNoConformidad" />
+          }
+
+        <!-- Contenedor en dos columnas -->
+        <div class="d-flex flex-nowrap" style="gap: 2rem; overflow-x: auto;">
+            <!-- Columna izquierda -->
+            <div class="w-50">
+                <div class="mb-3">
+                    <label class="form-label text-white">
+                        Piezas
+                        <a href="#" class="link-agregar-pieza ms-2" style="font-size: 0.9rem;">Agregar más piezas</a>
+                    </label>
+                    <select asp-for="IdPieza" class="form-select" id="selectPieza">
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        @if (Model.ListaPiezas != null)
+                        {
+                            foreach (var pieza in Model.ListaPiezas)
+                            {
+                                <option value="@pieza.IdPieza">@pieza.Descripcion</option>
+                            }
+                        }
+                    </select>
+                </div>
+               <div class="row mb-3">
+               <div class="col-md-6">
+                    <label for="Cantidad" class="form-label">Cantidad</label>
+                    <input type="number" class="form-control input-custom" id="Cantidad" name="Cantidad" value="@Model.Cantidad" />
+                 </div>
+
+
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-white">Frecuencia</label>
+                    <input asp-for="Frecuencia" class="form-control" type="number" autocomplete="off" />
+                    @Html.ValidationMessageFor(m => m.Frecuencia, "", new { @class = "text-danger" })
+                </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white">Proceso</label>
+                    <select asp-for="IdProceso" class="form-select" id="selectProceso">
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        @if (Model.ListaProcesos != null)
+                        {
+                            foreach (var proceso in Model.ListaProcesos)
+                            {
+                                <option value="@proceso.IdProcesos">@proceso.Nombre</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Recurrente</label>
+                    <div class="mb-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Recurrente" value="true" @(Model.Recurrente ? "checked" : "") />
+                            <label class="form-check-label text-white">Sí</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Recurrente" value="false" @(!Model.Recurrente ? "checked" : "") />
+                            <label class="form-check-label text-white">No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="IdCausa" class="form-label">Causa</label>
+                        <select id="selectCausa" name="IdCausa" multiple class="form-select select-custom">
+                            @foreach (var causa in Model.ListaCausas)
+                            {
+                                var isSelected = Model.IdCausa?.Contains(causa.IdCausa) == true;
+                                <option value="@causa.IdCausa" selected="@(isSelected ? "selected" : null)">
+                                    @causa.Descripcion
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white">Detectabilidad</label>
+                    <select asp-for="IdDetectabilidad" class="form-select" id="selectDetectabilidad">
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        @if (Model.ListaDetectabilidades != null)
+                        {
+                            foreach (var det in Model.ListaDetectabilidades)
+                            {
+                                <option value="@det.IdDetectabilidad">@det.Descripcion</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3 estado-defecto">
+                    <label class="form-label text-white">Defectos</label>
+                    <select name="IdDefecto" id="selectDefecto" class="form-select" multiple>
+                        <option value="">-- Seleccione --</option>
+                        @if (Model.ListaDefectos != null)
+                        {
+                            foreach (var def in Model.ListaDefectos)
+                            {
+                                var selectedAttr = Model.IdDefecto.Contains(def.IdDefecto) ? "selected" : "";
+                                @:<option value="@def.IdDefecto" @selectedAttr>@def.NombreDefecto</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="w-50">
+                <div class="mb-3">
+                    <label class="form-label text-white">Fecha de Incidente</label>
+                    <input asp-for="FechaIncidente" class="form-control" type="date" />
+                    @Html.ValidationMessageFor(m => m.FechaIncidente, "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Fecha de Producción</label>
+                    <input asp-for="FechaProduccion" class="form-control" type="date" />
+                    @Html.ValidationMessageFor(m => m.FechaProduccion, "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3 d-flex">
+                    <div class="flex-grow-1 me-2">
+                        <label class="form-label text-white">Prioridad</label>
+                        <select asp-for="IdPrioridad" class="form-select" id="selectPrioridad">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                            @if (Model.ListaPrioridades != null)
+                            {
+                                foreach (var pri in Model.ListaPrioridades)
+                                {
+                                    <option value="@pri.IdPrioridad">@pri.Descripcion</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="flex-grow-1">
+                        <label class="form-label text-white">Estado</label>
+                        <select asp-for="IdEstado" class="form-select" id="selectEstado">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                            @if (Model.ListaEstados != null)
+                            {
+                                foreach (var est in Model.ListaEstados)
+                                {
+                                    <option value="@est.IdEstado">@est.Descripcion</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Gravedad</label>
+                    <input asp-for="Gravedad" class="form-control" type="text" autocomplete="off" />
+                    @Html.ValidationMessageFor(m => m.Gravedad, "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Consecuencia</label>
+                    <input asp-for="Consecuencia" class="form-control" type="text" autocomplete="off" />
+                    @Html.ValidationMessageFor(m => m.Consecuencia, "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Descripción</label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="6" style="min-height: 120px;"></textarea>
+                    @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloque inferior: Fechas y botón -->
+        <div class="bloque-inferior">
+            <div class="col-izquierda">
+                <div class="fechas-container">
+                    <div class="fecha-item">
+                        <label>Fecha de Creación</label>
+                        <input asp-for="FechaCreacion" type="date" class="fecha-input" />
+                        @Html.ValidationMessageFor(m => m.FechaCreacion, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="fecha-item">
+                        <label>Fecha de Vencimiento</label>
+                        <input asp-for="FechaVencimiento" type="date" class="fecha-input fecha-vencimiento" />
+                        @Html.ValidationMessageFor(m => m.FechaVencimiento, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-derecha">
+                <button type="submit" class="btn btn-light crear-btn">
+                    @(Model.IdNoConformidad > 0 ? "Modificar" : "Crear")
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de Éxito -->
+<div class="modal fade" id="modalExito" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2" style="color: #00ff00; font-size: 1.5rem;"></i>
+                <p id="mensajeExitoModal" class="mb-0">No conformidad creada/modificada correctamente.</p>
+
+            </div>
+
+            <div class="modal-footer justify-content-center">
+               <button
+                  id="btnAceptarExito"
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                  onclick="window.location='@Url.Action("Index","NoConformidades")'">
+                  Aceptar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnAsignarEquipo">Asignar equipo de trabajo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Asignar equipo de trabajo -->
+<div class="modal fade" id="modalAsignarEquipo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <!-- Añadimos la clase `modal-asignar` aquí -->
+    <div class="modal-content modal-asignar">
+      <div class="modal-header">
+        <h5 class="modal-title">Asignar No Conformidad a equipo de trabajo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="selectEquipos" class="form-label">Equipo</label>
+          <!-- Sigue usando form-select -->
+          <select id="selectEquipos" class="form-select">
+            <option value="">-- Seleccione un equipo --</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Miembros</label>
+          <!-- La lista puede conservar list-group -->
+          <ul id="listaMiembros" class="list-group">
+            <!-- Aquí se inyectan <li> con los usuarios -->
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!-- Botones con tus clases habituales -->
+        <button id="btnAceptarAsignar" type="button" class="btn btn-primary">
+          Aceptar
+        </button>
+        <button id="btnCancelarAsignar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de Error -->
+<div class="modal fade" id="modalError" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <i class="bi bi-x-circle-fill me-2" style="color: #ff0000; font-size: 1.5rem;"></i>
+                <p id="mensajeErrorModal" class="mb-0">No conformidad no creada/modificada, intente nuevamente.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Validación -->
+<div class="modal fade" id="modalValidacion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title">Datos incompletos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="mensajeValidacion" class="mb-0"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Scripts: Primero la variable createAjaxUrl y luego el archivo JS -->
+<script>
+    const createAjaxUrl = '@Url.Action("CreateAjax", "NoConformidades")';
+    console.log("Ruta generada: ", createAjaxUrl);
+</script>
+
+@section Scripts {
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="~/js/CrearNoConformidad.js"></script>
+}
+

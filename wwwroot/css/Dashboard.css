@@ -1,0 +1,25 @@
+﻿/* Aplica a tu dropdown de notificaciones */
+.dropdown-menu.notificaciones-dropdown {
+    max-height: 300px; /* alto máximo y scroll */
+    overflow-y: auto;
+}
+
+    /* Ítems más compactos */
+    .dropdown-menu.notificaciones-dropdown .dropdown-item {
+        padding: 0.25rem 0.75rem; /* menos espacio interno */
+        font-size: 0.75rem; /* texto más pequeño */
+        line-height: 1.2; /* líneas más juntas */
+        white-space: normal; /* permite que textee en varias líneas */
+        overflow-wrap: break-word; /* divide palabras largas */
+    }
+
+        /* Fecha aún más chiquita */
+        .dropdown-menu.notificaciones-dropdown .dropdown-item small {
+            font-size: 0.65rem;
+            color: #aaa;
+        }
+
+/* Sobrescribimos el color de los <small> dentro del dropdown de notificaciones */
+.notificaciones-dropdown .dropdown-item small {
+    color: #6B1FBF !important; /* tu violeta personalizado */
+}

@@ -1,0 +1,263 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* GENERAL */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    margin-left: 10px; /* Ajustá el valor como te guste */
+}
+
+
+
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    width: 100%;
+    flex-grow: 1;
+    background-color: #212529;
+}
+
+/* SIDEBAR */
+#sidebar {
+    width: 70px;
+    min-width: 70px;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    background-color: #141724;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+    /* Sidebar expandido */
+    #sidebar.expand {
+        width: 260px;
+        min-width: 260px;
+    }
+
+/* Botón hamburguesa */
+.toggle-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1.5rem;
+}
+
+    .toggle-btn i {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+/* Logo */
+.sidebar-logo {
+    margin: 20px 0 150px 0;
+    text-align: center;
+}
+
+    .sidebar-logo a {
+        color: white;
+        font-size: 1.15rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+/* Sidebar Nav */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 10px;
+    flex: 1 1 auto;
+    padding: 2rem 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 15px;
+    font-size: 16px;
+    color: white !important; /* 👈 AGREGÁ ESTE !important */
+    text-decoration: none !important; /* Para que no subraye */
+}
+
+
+    .sidebar-link i {
+        font-size: 22px;
+    }
+
+/* Hover efecto */
+.sidebar-nav .sidebar-link:hover {
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+    box-shadow: 0px 0px 25px rgba(106, 17, 203, 0.8);
+    transform: scale(1.05);
+}
+
+/* Activo */
+.sidebar-link.active {
+    background-color: #6a11cb;
+    color: white !important;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* Footer Logout */
+.sidebar-footer {
+    padding: 1rem;
+}
+
+    .sidebar-footer a:hover {
+        border: none;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        box-shadow: 0px 0px 25px rgba(106, 17, 203, 0.8);
+        transform: scale(1.05);
+    }
+
+/* RESPONSIVE */
+@media (min-width: 992px) {
+    #sidebar {
+        width: 260px;
+        min-width: 260px;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar-logo a {
+        display: none;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    a.sidebar-link {
+        justify-content: center;
+        padding: 1rem;
+    }
+
+        a.sidebar-link span {
+            display: none;
+        }
+
+    .sidebar-footer {
+        display: flex;
+        justify-content: center;
+        padding: 1rem 0;
+    }
+
+    .welcome-text {
+        display: none;
+    }
+
+    .user-section {
+        justify-content: flex-end !important;
+    }
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: #A0A0A0;
+    padding: 12px 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Esto ocupa todo el ancho */
+    border-radius: 8px;
+}
+
+    .logout-btn:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: white;
+        font-weight: bold;
+        box-shadow: 0px 0px 25px rgba(106, 17, 203, 0.8);
+        transform: scale(1.05);
+        transition: all 0.1s ease-in-out;
+    }
+
+.notificaciones-dropdown {
+    background-color: #141724;
+    color: #fff;
+    border: none;
+    /* Si quieres quitar la sombra y el borde redondeado de Bootstrap: */
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+
+/* Opcional: estiliza también cada ítem del dropdown */
+.notificaciones-dropdown .dropdown-item {
+    background-color: #141724;
+    color: #fff;
+}
+
+    /* Hover de los ítems */
+    .notificaciones-dropdown .dropdown-item:hover {
+        background-color: #2a2e35; /* Un tono más claro/oscuro */
+        color: #fff;
+    }
+
+    .notificaciones-dropdown .dropdown-item {
+        background-color: transparent; /* O #141724 si lo prefieres */
+        color: #fff;
+    }
+
+        .notificaciones-dropdown .dropdown-item:hover {
+            background-color: #2a2e35;
+            color: #fff;
+        }
+@media (max-width: 576px) {
+    .notificaciones-dropdown {
+        width: 90vw !important; /* Ocupa el 90% del ancho de la ventana */
+        left: auto !important; /* Asegúrate de que no se pegue a la izquierda */
+        right: 0 !important; /* Alinea a la derecha si lo deseas */
+    }
+}
+.notificaciones-dropdown {
+    z-index: 9999; /* o el valor que necesites */
+}
+
+
+
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column; /* El sidebar se apila arriba */
+        height: auto; /* Para que crezca según contenido */
+    }
+
+    #sidebar {
+        width: 100% !important; /* Ahora ocupa todo el ancho */
+        max-height: none; /* Quita la limitación vertical */
+        position: static; /* Para que no quede “sticky” */
+    }
+
+    .main-content {
+        height: auto; /* Deja que el contenido fluya */
+        overflow: visible; /* Ya no necesitamos overflow:auto */
+    }
+}

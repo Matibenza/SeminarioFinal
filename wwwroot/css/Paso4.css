@@ -1,0 +1,467 @@
+﻿/* Toolbar */
+.toolbar-paso4 .btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.filtros-paso4 .form-control,
+.filtros-paso4 .form-select {
+    min-width: 150px;
+}
+
+/* Board general */
+.board {
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Cada columna */
+.board-column {
+    flex: 1;
+    background: #252836;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Cabecera de columna */
+.column-header {
+    padding: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Cuerpo de columna */
+.column-body {
+    flex: 1;
+    min-height: 200px;
+    padding: 0.75rem;
+    background: #1f1d33;
+    overflow-y: auto;
+}
+
+/* Tarjetas */
+.task-card {
+    background: #2a273f;
+    color: #fff;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+    cursor: grab;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+    .task-card h5 {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+    }
+
+    .task-card small {
+        color: #bbb;
+    }
+
+/* gradient backgrounds para los headers */
+
+.column-header.bg-info {
+    /* Por Hacer: degradado aqua → azul */
+    background: linear-gradient(90deg, #00C6FF 0%, #0072FF 100%) !important;
+}
+
+.column-header.bg-warning {
+    /* En Progreso: rosa → magenta */
+    background: linear-gradient(90deg, #F953C6 0%, #B91D73 100%) !important;
+}
+
+.column-header.bg-success {
+    /* Finalizado: verde claro → verde oscuro */
+    background: linear-gradient(90deg, #A8FF00 0%, #4CAF50 100%) !important;
+}
+
+
+/* Filtros: fondo oscuro y texto claro */
+.filtros-paso4 .form-control,
+.filtros-paso4 .form-select {
+    background-color: #1C202C !important;
+    border: 1px solid #333;
+    color: #fff;
+}
+
+    /* Ajuste para el ícono del calendario del datepicker */
+    .filtros-paso4 .form-control[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+
+    /* Placeholder en gris claro */
+    .filtros-paso4 .form-control::placeholder {
+        color: #aaa;
+    }
+
+/* botón Crear/Guardar con tu púrpura personalizado */
+.btn-crear {
+    background-color: #6B1FBF;
+    border-color: #6B1FBF;
+    color: #fff;
+}
+
+    .btn-crear:hover,
+    .btn-crear:focus {
+        /* opcional: un tono ligeramente más oscuro al hacer hover */
+        background-color: #58189e;
+        border-color: #58189e;
+    }
+
+/* ─────────────────────────────────────────────────────────────
+   Choices.js dentro del bottom-wrapper
+   ───────────────────────────────────────────────────────────── */
+.bottom-wrapper .choices__inner {
+    background-color: #1C202C !important;
+    border: 1px solid #333 !important;
+    border-radius: 4px !important;
+    padding: 0.5rem !important;
+    color: #fff !important;
+    min-height: 2.5em;
+}
+
+    /* Texto de los items dentro del input */
+    .bottom-wrapper .choices__inner .choices__item {
+        color: #fff;
+    }
+
+    /* Flecha desplegable invertida */
+    .bottom-wrapper .choices__inner .choices__indicator {
+        filter: invert(1);
+    }
+
+
+
+.date-input:focus {
+    outline: none;
+    border-color: #6B1FBF !important;
+    box-shadow: 0 0 0 0.2rem rgba(107, 31, 191, 0.25) !important;
+}
+/* ─────────────────────────────────────────────────────────────
+   Degradados según Estado (igual que Paso3)
+   ───────────────────────────────────────────────────────────── */
+.estado-pendiente .choices__inner {
+    background: linear-gradient(90deg, #FFC107 0%, #FF9800 100%) !important;
+}
+
+.estado-en-progreso .choices__inner {
+    background: linear-gradient(90deg, #F953C6 0%, #B91D73 100%) !important;
+}
+
+.estado-completado .choices__inner {
+    background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%) !important;
+}
+
+.estado-terminado .choices__inner {
+    background: linear-gradient(90deg, #00C6FF 0%, #0072FF 100%) !important;
+    color: #fff !important;
+}
+
+/* ============================= */
+/* Estilos para modal “Crear Tarea” en Paso 4 */
+/* ============================= */
+
+/* Fondo y contorno de la ventana */
+#modalNuevaTarea .modal-content {
+    background-color: #141724 !important; /* fondo principal del modal */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header: título en púrpura, sin borde inferior */
+#modalNuevaTarea .modal-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+#modalNuevaTarea .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #6B1FBF;
+}
+
+#modalNuevaTarea .btn-close {
+    filter: invert(1);
+}
+
+/* Labels en uppercase y gris claro */
+#modalNuevaTarea .form-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #AAAAAA;
+    margin-bottom: 0.25rem;
+}
+
+/* Inputs, selects y datepickers: fondo oscuro, borde tenue y texto blanco */
+#modalNuevaTarea .form-control,
+#modalNuevaTarea .form-select,
+#modalNuevaTarea .date-input {
+    background-color: #1C202C; /* fondo de campos */
+    border: 1px solid #3A3751;
+    border-radius: 4px;
+    color: #FFFFFF;
+    padding: 0.5rem 0.75rem;
+}
+
+    /* Placeholder más claro */
+    #modalNuevaTarea .form-control::placeholder {
+        color: #888888;
+    }
+
+    /* Quitar el glow por defecto y poner borde púrpura al hacer focus */
+    #modalNuevaTarea .form-control:focus,
+    #modalNuevaTarea .form-select:focus,
+    #modalNuevaTarea .date-input:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #6B1FBF;
+    }
+
+/* Espaciado interno de la body */
+#modalNuevaTarea .modal-body {
+    padding: 1.5rem;
+}
+
+    #modalNuevaTarea .modal-body .row.g-3 > div {
+        margin-bottom: 1rem;
+    }
+
+/* Footer sin borde superior */
+#modalNuevaTarea .modal-footer {
+    border-top: none;
+    padding: 1rem 1.5rem;
+}
+
+/* Botón “Grabar” con tu púrpura personalizado */
+#modalNuevaTarea .btn-crear {
+    background-color: #6B1FBF;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+}
+
+    #modalNuevaTarea .btn-crear:hover,
+    #modalNuevaTarea .btn-crear:focus {
+        background-color: #58189e;
+    }
+
+/* Iconos (bootstrap icons) en púrpura para destacar */
+#modalNuevaTarea .bi {
+    color: #6B1FBF;
+}
+
+/* ==== Secciones derecha del modal Crear Tarea ==== */
+.card-section {
+    background-color: #1C202C;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #A3A3A3;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+    .section-header .bi {
+        font-size: 1.2rem;
+        color: #48007B;
+        margin-right: 0.5rem;
+    }
+
+.date-group {
+    position: relative;
+}
+
+    .date-group .form-control {
+        background-color: #141724;
+        border: 1px solid #48007B;
+        color: #FFFFFF;
+    }
+
+    .date-group .input-group-text {
+        background: transparent;
+        border: none;
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+.status-btn,
+.priority-btn,
+.action-type-btn {
+    width: 100%;
+    background-color: #141724;
+    border: 1px solid #48007B;
+    color: #FFFFFF;
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.comments-section .comments-carousel {
+    height: 4rem;
+    margin-top: 0.5rem;
+    /* ajusta aquí la altura o agrega estilos de navegación */
+}
+/* ====== Degradados para Prioridad ====== */
+.choices__inner.priority-alta {
+    background: #40131E !important;
+    color: #E52627 !important;
+    border: none !important;
+}
+
+.choices__inner.priority-baja {
+    background: #7A84E6 !important;
+    color: #0001EA !important;
+    border: none !important;
+}
+.choices__inner.priority-media {
+    background: #EAE59D !important;
+    color: #CFCB00 !important;
+    border: none !important;
+}
+
+/* ====== Degradados para Tipo de acción ====== */
+.choices__inner.action-correctiva {
+    background-color: rgba(40, 167, 69, 0.2) !important; /* verde claro semitransparente */
+    color: #28a745 !important; /* texto en verde intenso */
+    border: none !important;
+}
+
+.choices__inner.action-preventiva {
+    /* ejemplo: azul suave sobre fondo oscuro */
+    background: #1A1E4E !important;
+    color: #7A84E6 !important;
+    border: none !important;
+}
+
+#modalComentariosTarea .modal-content {
+    /* Si tu bg-dark no es suficientemente oscuro: */
+    background-color: #141724 !important;
+}
+
+#modalComentariosTarea .modal-body,
+#modalComentariosTarea .modal-footer {
+    padding: 1.5rem;
+}
+
+#modalComentariosTarea .list-group-item {
+    background: rgba(255,255,255,0.05);
+    border: none;
+}
+
+#modalComentariosTarea .btn-crear {
+    /* asegúrate de usar tu gradiente o color violeta */
+}
+
+#modalComentariosTarea .btn-secondary {
+    color: #ccc;
+    border-color: #444;
+}
+
+/* Comentarios en el modal de Paso4: texto blanco */
+#modalComentariosTarea .list-group-item {
+    color: #fff !important;
+}
+
+    /* Si quisieras que la fecha (text-muted) también quede más clara en blanco semitransparente */
+    #modalComentariosTarea .list-group-item .text-muted {
+        color: rgba(255,255,255,0.6) !important;
+    }
+
+/* Y para el textarea de nuevo comentario */
+#modalComentariosTarea textarea.form-control {
+    color: #fff !important;
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+/* Borde oscuro por defecto */
+#modalComentariosTarea textarea.form-control {
+    border: 1px solid #1C202C !important;
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+    /* Focus violeta para el textarea de comentarios */
+    #modalComentariosTarea textarea.form-control:focus {
+        border-color: #48007B !important;
+        /* sombra suave violeta */
+        box-shadow: 0 0 0 0.2rem rgba(72, 0, 123, 0.25) !important;
+        outline: none !important;
+    }
+
+    /* Placeholder en blanco */
+    #modalComentariosTarea textarea.form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+        opacity: 1; /* asegurar compatibilidad */
+    }
+
+/* ======================================================
+   Fade-in / fade-out para el diálogo del modal
+   ====================================================== */
+.modal.fade .modal-dialog {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.98);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.modal.fade.show .modal-dialog {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ======================================================
+   Fade-in / fade-out para la capa de fondo (backdrop)
+   ====================================================== */
+.modal-backdrop {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+}
+
+    .modal-backdrop.show {
+        opacity: 0.5; /* ajústalo al nivel de opacidad que prefieras */
+    }
+
+/* Limita la altura de la lista de comentarios y habilita el scroll vertical */
+#modalComentariosTarea .modal-body {
+    /* altura total disponible para el body del modal */
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+/* Opcional: si quieres controlar solo la lista interna */
+#modalComentariosTarea #listaComentarios {
+    max-height: 250px; /* ajusta según necesites */
+    overflow-y: auto;
+}
+
+/* Para que el carousel de mini‐resúmenes también scrollee */
+#modalNuevaTarea .comments-carousel {
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: 0.5rem; /* espacio para la barra */
+}
+/* Que el focus de los filtros sea violeta */
+.filtros-paso4 .form-control:focus,
+.filtros-paso4 .form-select:focus {
+    border-color: #7e22ce !important; /* tono violeta */
+    box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25) !important;
+    outline: none;
+}
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none; /* opcional, para que no se pueda clickear */
+    opacity: 0.6; /* opcional, un poco más opaco */
+}

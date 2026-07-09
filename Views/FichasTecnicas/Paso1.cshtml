@@ -1,0 +1,397 @@
+﻿@model TesisPractica.Models.Paso1Verificacion
+@{
+    // Casteamos ViewBag.Paso0Terminado (object) a bool
+    bool paso0Terminado = (ViewBag.Paso0Terminado as bool?) ?? false;
+}
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+
+    // convertir dynamic a SelectList tipadas
+    var empleadosList = (SelectList)ViewBag.Empleados;
+    var auditoresList = (SelectList)ViewBag.Auditores;
+    var estadosList = (SelectList)ViewBag.Estados;
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="~/css/Paso1.css" asp-append-version="true" />
+
+<div class="paso0-page">
+    <!-- Barra de pasos -->
+    <div class="steps-bar">
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso0", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 0
+        </div>
+        <div class="step step-active">STEP 1</div>
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso2", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 2
+        </div>
+
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso3", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 3
+        </div>
+
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso4", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 4
+        </div>
+
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso5", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 5
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso6", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 6
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso7", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 7
+        </div>
+    </div>
+
+
+
+    <!-- Contenedor principal -->
+    <div class="paso0-content @( (ViewBag.Paso0Terminado as bool? ?? false) ? "" : "blurred" )">
+        <div class="paso0-header">
+            <h2 class="paso0-title">VERIFICACIÓN INICIAL</h2>
+            @{
+                // 1) Elegimos la fecha fin efectiva
+                var fechaFin = Model.FechaFin ?? Model.FechaFinEstimada;
+                // 2) Calculamos la diferencia
+                var diff = (fechaFin ?? DateTime.Now) - DateTime.Now;
+                string restante;
+
+                if (diff.TotalSeconds <= 0)
+                {
+                    restante = "0 horas";
+                }
+                else if (diff.TotalDays >= 1)
+                {
+                    var dias = (int)Math.Floor(diff.TotalDays);
+                    // concatenamos para evitar nested quotes
+                    restante = dias + (dias > 1 ? " días" : " día");
+                }
+                else
+                {
+                    var horas = (int)Math.Floor(diff.TotalHours);
+                    restante = horas + (horas > 1 ? " horas" : " hora");
+                }
+            }
+            <div class="paso0-timer">
+                <span>TIEMPO RESTANTE</span>
+                <span class="timer-value">@restante</span>
+            </div>
+        </div>
+
+        <hr class="hr-violeta" />
+
+
+        <form asp-controller="Paso1"
+              asp-action="Index"
+              asp-route-idFicha="@Model.IdFichaTecnica"
+              method="post"
+              id="formVerificacionInicial">
+
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdFichaTecnica" />
+            @Html.ValidationSummary(/* excludePropertyErrors: */ false, "", new { @class = "text-danger" })
+            <div class="row mb-4">
+                <!-- Mitad izquierda -->
+                <div class="col-md-6">
+                    <label asp-for="TipoProblema" class="form-label fw-bold text-uppercase">Tipo de problema</label>
+                    <div class="btn-group w-100 mb-3" role="group" aria-label="Tipo de problema">
+                        <input type="radio"
+                               asp-for="TipoProblema"
+                               value="0"
+                               id="esporadico"
+                               class="btn-check"
+                               checked/>
+                        <label class="btn btn-outline-primary" for="esporadico">Esporádico</label>
+
+                        <input type="radio"
+                               asp-for="TipoProblema"
+                               value="1"
+                               id="cronico"
+                               class="btn-check" />
+                        <label class="btn btn-outline-primary" for="cronico">Crónico</label>
+                    </div>
+
+                    <label asp-for="Objetivo" class="form-label fw-bold text-uppercase">Objetivo</label>
+                    <textarea asp-for="Objetivo"
+                              class="form-control"
+                              id="objetivo"
+                              rows="3"
+                              placeholder="Escriba el objetivo…"
+                              autocomplete="off">
+                    </textarea>
+                </div>
+
+                <!-- Mitad derecha -->
+                <div class="col-md-6">
+                    <!-- OPERADOR -->
+                    <label asp-for="IdOperador" class="form-label fw-bold text-uppercase">Operador</label>
+                    <select asp-for="IdOperador"
+                            id="Operador"
+                            asp-items="empleadosList"
+                            class="form-select mb-3 choices">
+                        <option value="">Seleccione operador</option>
+                    </select>
+
+                    <label asp-for="Turno" class="form-label fw-bold text-uppercase">Turno</label>
+                    <div class="btn-group w-100" role="group" aria-label="Turno">
+                        <input type="radio"
+                               asp-for="Turno"
+                               value="0"
+                               id="turnoManana"
+                               class="btn-check"
+                               checked/>
+                        <label class="btn btn-outline-primary w-33" for="turnoManana">Mañana</label>
+
+
+                        <input type="radio"
+                               asp-for="Turno"
+                               value="1"
+                               id="turnoTarde"
+                               class="btn-check"
+                               autocomplete="off" />
+                        <label class="btn btn-outline-primary w-33" for="turnoTarde">Tarde</label>
+
+                        <input type="radio"
+                               asp-for="Turno"
+                               value="2"
+                               id="turnoNoche"
+                               class="btn-check"
+                               autocomplete="off" />
+                        <label class="btn btn-outline-primary w-33" for="turnoNoche">Noche</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="hr-violeta" />
+
+            <!-- 5W -->
+            <h5 class="text-uppercase fw-bold mb-3">5W</h5>
+            <div class="row g-4 mb-4">
+                <!-- Izquierda: ¿Qué? y ¿Cuál? -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="QueSucede" class="form-label fw-bold text-uppercase">¿Qué?</label>
+                        <input asp-for="QueSucede"
+                               id="que"
+                               class="form-control"
+                               placeholder="Escriba qué…"
+                               autocomplete="off" />
+                    </div>
+                    <div>
+                        <label asp-for="CualPieza" class="form-label fw-bold text-uppercase">¿Cuál?</label>
+                        <input asp-for="CualPieza"
+                               id="cual"
+                               class="form-control"
+                               placeholder="Escriba cuál…"
+                               autocomplete="off" />
+                    </div>
+                </div>
+                <!-- Derecha: ¿Cuándo? y ¿Quién? -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="CuandoSucede" class="form-label fw-bold text-uppercase">¿Cuándo?</label>
+                        <input asp-for="CuandoSucede"
+                               type="date"
+                               id="cuando"
+                               class="form-control date-input"
+                               autocomplete="off" />
+                    </div>
+                    <div>
+                        <label asp-for="QuienDetecta" class="form-label fw-bold text-uppercase">¿Quién?</label>
+                        <input asp-for="QuienDetecta"
+                               id="quien"
+                               class="form-control"
+                               placeholder="Escriba quién…"
+                               autocomplete="off" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ¿Cómo? en ancho completo -->
+            <div class="mb-4">
+                <label asp-for="ComoSucede" class="form-label fw-bold text-uppercase">¿Cómo?</label>
+                <textarea asp-for="ComoSucede"
+                          class="form-control"
+                          id="como"
+                          rows="3"
+                          placeholder="Describa cómo…"
+                          autocomplete="off">
+                </textarea>
+            </div>
+
+            <hr class="hr-violeta" />
+
+            <!-- Bottom wrapper (igual que Paso0) -->
+            <div class="bottom-wrapper">
+                <!-- Fila de fechas -->
+                <div class="dates-row">
+                    <div class="date-field">
+                        <label asp-for="FechaInicio"  class="form-label fw-bold text-uppercase">FECHA DE INICIO</label>
+                        <input asp-for="FechaInicio" id="FechaInicio" type="date" class="date-input" />
+                    </div>
+                    <div class="date-field">
+                        <label asp-for="FechaFin" class="form-label fw-bold text-uppercase">FECHA FIN</label>
+                        <input asp-for="FechaFin" id="FechaFin" type="date" class="date-input" />
+                    </div>
+
+                    <div class="date-field">
+                        <label asp-for="FechaFinEstimada" class="form-label fw-bold text-uppercase">FECHA FIN ESTIMADA</label>
+                        
+                        <div class="date-input readonly-field">
+                            @Model.FechaFinEstimada?.ToString("yyyy-MM-dd")
+                        </div>
+                        <input asp-for="FechaFinEstimada" type="hidden" />
+                    </div>
+                </div>
+
+                <!-- Fila de responsable y estado -->
+                <div class="combo-row">
+                    <div class="combo-field">
+                        <label for="Responsable">RESPONSABLE</label>
+                        <select asp-for="Responsable"
+                                id="Responsable"
+                                class="form-select choices"
+                                asp-items="ViewBag.Usuarios"
+                                disabled="@( !(ViewBag.EsPiloto || ViewBag.EsSupervisor) ? "disabled" : null )">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="Responsable" class="text-danger"></span>
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="combo-field">
+                        <label for="IdEstado">ESTADO</label>
+                        <select asp-for="IdEstado"
+                                id="IdEstado"
+                                class="form-select choices">
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var item in (SelectList)ViewBag.Estados)
+                            {
+                                var isSelected = item.Value == Model.IdEstado.ToString() ? "selected" : null;
+                                var isDisabled = ViewBag.EsAuditor
+                                && item.Text.Equals("Terminado", StringComparison.OrdinalIgnoreCase)
+                                ? "disabled"
+                                : null;
+                                <option value="@item.Value"
+                                        selected="@isSelected"
+                                        disabled="@isDisabled">
+                                    @item.Text
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdEstado" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <!-- “Cerrar” con enlace a Detalle -->
+                <a asp-controller="FichasTecnicas"
+                   asp-action="Detalle"
+                   asp-route-id="@Model.IdFichaTecnica"
+                   class="btn-custom-secondary">
+                    Cerrar
+                </a>
+
+                <!-- “Guardar” con id y clase condicional -->
+                <button type="submit"
+                        id="btnGuardarPaso1"
+                        class="btn-custom-gradient @( (ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "no-permitido" )"
+                @((ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "tabindex='-1'")>
+                    Guardar Paso 1
+                </button>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+<!-- Modal de advertencia personalizada -->
+<div class="modal fade paso0-modal-denegado" id="modalPermisoGuardar" tabindex="-1" aria-labelledby="modalPermisoGuardarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalPermisoGuardarLabel">
+                    Permiso denegado
+                </h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body custom-modal-body">
+                Solo el <b>piloto</b>, el <b>responsable</b> o un <b>supervisor</b> pueden guardar los cambios.
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de error para fechas -->
+<div class="modal fade" id="modalErrorFechas" tabindex="-1" aria-labelledby="modalErrorFechasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalErrorFechasLabel">
+                    Error en las fechas
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body">
+                La <b>fecha de inicio</b> debe ser menor o igual a la <b>fecha de fin</b>.<br>
+                Por favor, corregí las fechas para continuar.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de campos obligatorios faltantes -->
+<div class="modal fade" id="modalFaltanCampos" tabindex="-1" aria-labelledby="modalFaltanCamposLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalFaltanCamposLabel">Campos incompletos</h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body custom-modal-body">
+                <!-- Aquí inyectaremos la lista -->
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ahora es un literal booleano: true o false
+    window.esAuditor = @(((bool)ViewBag.EsAuditor).ToString().ToLowerInvariant());
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/Paso1.js"></script>

@@ -1,0 +1,656 @@
+﻿    @using TesisPractica.Models
+    @using System.Text.Json
+    @using Microsoft.AspNetCore.Mvc.ViewFeatures
+    @model TesisPractica.Models.FichaTecnica
+    @using Microsoft.AspNetCore.Mvc.Rendering
+
+
+    @{
+        Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+        ViewData["Title"] = "Paso 4 – Plan de acción";
+
+    }
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="~/css/Paso5.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Paso4.css" asp-append-version="true" />
+
+    <div class="paso0-page">
+        <!-- Barra de pasos -->
+        <div class="steps-bar">
+            <div class="step" style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso0", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 0
+            </div>
+            <div class="step" style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso1", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 1
+            </div>
+            <div class="step"
+                 style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso2", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 2
+            </div>
+            <div class="step"
+                 style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso3", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 3
+            </div>
+            <div class="step step-active">STEP 4</div>
+            <div class="step" style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso5", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 5
+            </div>
+            <div class="step" style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso6", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 6
+            </div>
+            <div class="step" style="cursor:pointer;"
+                 onclick="location.href='@Url.Action("Index","Paso7", new { idFicha = Model.IdFichaTecnica })'">
+                STEP 7
+            </div>
+        </div>
+    @{
+        bool paso3Ok = ViewBag.Paso3Terminado as bool? ?? false;
+    }
+        <!-- Contenedor principal -->
+        <div id="contenidoFondo" class="paso0-content @(paso3Ok ? "" : "blurred")">
+            <div class="paso0-header">
+                <h2 class="paso0-title">PLAN DE ACCIÓN</h2>
+            </div>
+
+            <hr class="hr-violeta" />
+            <!-- Toolbar: Crear + Filtros -->
+            <div class="d-flex justify-content-between align-items-center mb-4 toolbar-paso4">
+                <button id="btnCrearTarea" class="btn btn-crear">
+                    <i class="bi bi-plus-lg"></i> Crear
+                </button>
+
+                <div class="d-flex filtros-paso4">            
+                    <!-- Prioridad -->
+                    <select id="filtroPrioridad"
+                            name="filtroPrioridad"
+                            asp-items="ViewBag.PrioridadesFiltro"
+                            class="form-select me-2">
+                        <option value="">Prioridad</option>
+                    </select>
+
+                    <!-- Personas -->
+                    <select id="filtroPersonas"
+                            name="filtroPersonas"
+                            asp-items="ViewBag.PersonasFiltro"
+                            class="form-select">
+                        <option value="">Personas</option>
+                    </select>
+                </div>
+            </div>
+
+        @* Tablero estilo Jira *@
+        <div class="board d-flex">
+
+            @* Columna Por Hacer *@
+            <div class="board-column">
+                <div class="column-header bg-info text-white">Por Hacer</div>
+                <div class="column-body" ondragover="allowDrop(event)"
+                     ondrop="dropTask(event, 'PENDIENTE')">
+                    @foreach (var t in (List<Tarea>)ViewBag.TareasPaso4)
+                    {
+                        if (t.Estado.Descripcion.Equals("PENDIENTE", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="task-card"
+                                 draggable="true"
+                                 ondragstart="dragTask(event)"
+                                 data-id="@t.IdTarea"
+                                 data-priority="@t.IdPrioridad"
+                                 data-responsible="@t.IdResponsable">
+                                <h5>@t.AccionDeMejora</h5>
+                                <small>
+                                    @($"#FCA-{t.IdFichaTecnica:000}") · @t.Prioridad.Descripcion
+                                </small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            @* Columna En Progreso *@
+            <div class="board-column">
+                <div class="column-header bg-warning text-white">En Progreso</div>
+                <div class="column-body" ondragover="allowDrop(event)"
+                     ondrop="dropTask(event, 'EN PROGRESO')">
+                    @foreach (var t in (List<Tarea>)ViewBag.TareasPaso4)
+                    {
+                        if (t.Estado.Descripcion.Equals("EN PROGRESO", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="task-card"
+                                 draggable="true"
+                                 ondragstart="dragTask(event)"
+                                 data-id="@t.IdTarea"
+                                 data-priority="@t.IdPrioridad"
+                                 data-responsible="@t.IdResponsable">
+                                <h5>@t.AccionDeMejora</h5>
+                                <small>
+                                    @($"#FCA-{t.IdFichaTecnica:000}") · @t.Prioridad.Descripcion
+                                </small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            @* Columna Finalizado *@
+            <div class="board-column">
+                <div class="column-header bg-success text-white">Finalizado</div>
+                <div class="column-body" ondragover="allowDrop(event)"
+                     ondrop="dropTask(event, 'COMPLETADO')">
+                    @foreach (var t in (List<Tarea>)ViewBag.TareasPaso4)
+                    {
+                        if (t.Estado.Descripcion.Equals("COMPLETADO", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="task-card"
+                                 draggable="true"
+                                 ondragstart="dragTask(event)"
+                                 data-id="@t.IdTarea"
+                                 data-priority="@t.IdPrioridad"
+                                 data-responsible="@t.IdResponsable">
+                                <h5>@t.AccionDeMejora</h5>
+                                <small>
+                                    @($"#FCA-{t.IdFichaTecnica:000}") · @t.Prioridad.Descripcion
+                                </small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+        </div>
+
+
+            <hr class="hr-violeta" />
+            <!-- == BOTTOM WRAPPER == -->
+        <form id="formPaso4"
+                asp-action="Index"
+                  asp-route-id="@Model.IdFichaTecnica"
+                  method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="bottom-wrapper mt-4">
+                    <div class="dates-row">
+                        <div class="date-field">
+                            <label asp-for="Paso4.FechaInicio" class="form-label fw-bold text-uppercase">
+                                FECHA DE INICIO
+                            </label>
+                            <input asp-for="Paso4.FechaInicio"
+                                   id="FechaInicio4"
+                                   type="date"
+                                   class="date-input" />
+                        </div>
+                        <div class="date-field">
+                            <label asp-for="Paso4.FechaFin" class="form-label fw-bold text-uppercase">
+                                FECHA FIN
+                            </label>
+                            <input asp-for="Paso4.FechaFin"
+                                   id="FechaFin4"
+                                   type="date"
+                                   class="date-input" />
+                        </div>
+                        <div class="date-field">
+                            <label asp-for="Paso4.FechaFinEstimada" class="form-label fw-bold text-uppercase">
+                                FECHA FIN ESTIMADA
+                            </label>
+                            <div class="date-input readonly-field">
+                                @Model.Paso4.FechaFinEstimada?.ToString("yyyy-MM-dd")
+                            </div>
+                            <input asp-for="Paso4.FechaFinEstimada" type="hidden" />
+                        </div>
+                    </div>
+
+                    <div class="combo-row mt-3">
+                        <div class="combo-field">
+                            <label asp-for="Paso4.Responsable">RESPONSABLE</label>
+
+                            @* Select con solo piloto, deshabilitado *@
+                            <select asp-for="Paso4.Responsable"
+                                    asp-items="ViewBag.Responsables4"
+                                    id="Responsable4"
+                                    class="form-select"
+                                    disabled>
+                                @* No incluyas placeholder ni opciones extras *@
+                            </select>
+
+                            @* Hidden para que el valor llegue al POST *@
+                            <input asp-for="Paso4.Responsable" type="hidden" />
+
+                            <span asp-validation-for="Paso4.Responsable" class="text-danger"></span>
+                        </div>
+
+                    @{
+                        bool esResponsable = ViewBag.EsResponsable as bool? ?? false;
+                        bool esSupervisor = ViewBag.EsSupervisor as bool? ?? false;
+                        bool puedeTerminar = esResponsable || esSupervisor;
+                    }
+
+                    <div class="combo-field">
+                        <label asp-for="Paso4.IdEstado" class="form-label">ESTADO</label>
+                        <select asp-for="Paso4.IdEstado"
+                                id="IdEstado4"
+                                class="form-select choices">
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var item in (SelectList)ViewBag.Estados)
+                            {
+                                // Detectamos si es la opción “Terminado”
+                                bool isTerminado = item.Text.Equals("Terminado", StringComparison.OrdinalIgnoreCase);
+
+                                <option value="@item.Value"
+                                        selected="@(item.Value == Model.Paso4.IdEstado.ToString() ? "selected" : null)"
+                                        disabled="@(isTerminado && !puedeTerminar ? "disabled" : null)">
+                                    @item.Text
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="Paso4.IdEstado" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="form-actions mt-4 d-flex justify-content-end">
+                    <a asp-controller="FichasTecnicas"
+                       asp-action="Detalle"
+                       asp-route-id="@Model.IdFichaTecnica"
+                       class="btn-custom-secondary me-2">
+                        Cerrar
+                    </a>
+                    <button type="submit"
+                            id="btnGuardarPaso4"
+                            class="btn-custom-gradient">
+                        Guardar Paso 4
+                    </button>
+                </div>
+            </form>
+            <!-- == FIN BOTTOM WRAPPER == -->
+        </div>
+    </div> <!-- cierra paso0-page -->
+@* Modal Crear Tarea Paso 4 con Choices.js *@
+<div class="modal fade" id="modalNuevaTarea" tabindex="-1" aria-labelledby="modalNuevaTareaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="modalNuevaTareaLabel">TAREA</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <form id="antiForgeryForm"
+                asp-action="CrearTarea"
+                  asp-controller="Paso4"
+                  asp-route-idFicha="@Model.IdFichaTecnica"
+                  method="post">
+                @Html.AntiForgeryToken()
+
+                @* Liga la tarea a la ficha *@
+                <input type="hidden" name="IdFichaTecnica" value="@Model.IdFichaTecnica" />
+
+                <div class="modal-body">
+                    <div class="row gx-5 gy-3">
+
+                        <!-- IZQUIERDA (8 columnas) -->
+                        <div class="col-lg-8">
+                            <div class="row g-3">
+
+                                <!-- Cliente (display only) -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Cliente</label>
+                                    <select class="form-select" disabled>
+                                        <option value="@Model.NoConformidad.Pieza.Cliente.Nombre" selected>
+                                            @Model.NoConformidad.Pieza.Cliente.Nombre
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Ficha Técnica (display only) -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Ficha Técnica</label>
+                                    <select class="form-select" disabled>
+                                        <option value="@($"FCA-{Model.IdFichaTecnica:000}")" selected>
+                                            @($"FCA-{Model.IdFichaTecnica:000}")
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- ID Pieza (display only) -->
+                                <div class="col-12">
+                                    <label class="form-label">ID Pieza</label>
+                                    <input class="form-control"
+                                           value="@Model.NoConformidad.IdPieza"
+                                           readonly />
+                                </div>
+
+                                <!-- Causa (5-porqués) -->
+                                <div class="col-12">
+                                    <label class="form-label">Causa</label>
+                                    <select name="IdCausaPasos"
+                                            class="form-select js-choice">
+                                        <option value="">-- Seleccione causa --</option>
+                                        @foreach (var item in ViewBag.CausasFenomeno as List<SelectListItem>)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Acción de Mejora -->
+                                <div class="col-12">
+                                    <label class="form-label">Acción de Mejora</label>
+                                    <textarea name="AccionDeMejora"
+                                              class="form-control"
+                                              rows="2"></textarea>
+                                </div>
+
+                                <!-- Descripción de la Mejora -->
+                                <div class="col-12">
+                                    <label class="form-label">Descripción de la Mejora</label>
+                                    <textarea name="DescripcionDeMejora"
+                                              class="form-control"
+                                              rows="3"></textarea>
+                                </div>
+
+                                <!-- Canal de Implementación -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Canal de Implementación</label>
+                                    <input name="CanalImplementacion"
+                                           class="form-control" autocomplete="off" />
+                                </div>
+
+                                <!-- Lugar de Aplicación -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Lugar de Aplicación</label>
+                                    <input name="LugarAplicacion"
+                                           class="form-control" autocomplete="off" />
+                                </div>
+
+                                <!-- Comentarios (display only) -->
+                                <div class="col-12">
+                                    <div class="card-section comments-section">
+                                        <div class="section-header d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="bi bi-chat-left-text"></i>
+                                                Comentarios
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-secondary me-2">
+                                                    @(ViewBag.ComentariosCount ?? 0)
+                                                </span>
+                                                <i class="bi bi-plus-lg"></i>
+                                            </div>
+                                        </div>
+                                        <div class="comments-carousel"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- DERECHA (4 columnas) -->
+                        <div class="col-lg-4">
+                            <div class="d-grid gap-3">
+
+                                <!-- Plazos -->
+                                <div class="card-section">
+                                    <div class="section-header">
+                                        <i class="bi bi-clock-history"></i>
+                                        Plazos
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <label class="form-label">Fecha objetivo</label>
+                                            <div class="input-group date-group">
+                                                <input name="FechaObjetivo"
+                                                       type="date"
+                                                       class="form-control date-input" />
+                                                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Fecha final</label>
+                                            <div class="input-group date-group">
+                                                <input name="FechaFinal"
+                                                       type="date"
+                                                       class="form-control date-input" />
+                                                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Responsable -->
+                                <div class="card-section">
+                                    <div class="section-header">
+                                        <i class="bi bi-person-circle"></i>
+                                        Responsable
+                                    </div>
+                                    <select name="IdResponsable"
+                                            class="form-select js-choice">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach (var u in ViewBag.EmpleadosTarea as List<SelectListItem>)
+                                        {
+                                            <option value="@u.Value">@u.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Estado -->
+                                <div class="card-section">
+                                    <div class="section-header">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        Estado
+                                    </div>
+                                    <select id="EstadoTarea"
+                                            name="IdEstado"
+                                            class="form-select js-choice">
+                                        <option value="">-- Seleccione Estado --</option>
+                                        @* ahora iteramos sobre el SelectList *@
+                                        @foreach (SelectListItem e in ViewBag.EstadosModal)
+                                        {
+                                            <option value="@e.Value" selected="@e.Selected">@e.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Prioridad -->
+                                <div class="card-section">
+                                    <div class="section-header">
+                                        <i class="bi bi-flag"></i>
+                                        Prioridad
+                                    </div>
+                                    <select id="PrioridadTarea" name="IdPrioridad" class="form-select js-choice">
+                                        <option value="">-- Seleccione Prioridad --</option>
+                                        @foreach (SelectListItem p in ViewBag.PrioridadesTarea)
+                                        {
+                                            <option value="@p.Value">@p.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Tipo de acción -->
+                                <div class="card-section">
+                                    <div class="section-header">
+                                        <i class="bi bi-tools"></i>
+                                        Tipo de acción
+                                    </div>
+                                    <select id="TipoAccionTarea"
+                                            name="IdTipoAccion"
+                                            class="form-select js-choice">
+                                        <option value="">-- Seleccione Tipo de Acción --</option>
+                                        @foreach (var t in ViewBag.TiposAccionTarea as List<SelectListItem>)
+                                        {
+                                            <option value="@t.Value">@t.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="submit" class="btn btn-crear">Grabar</button>
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal">
+                                        Cancelar
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Comentarios de Tarea -->
+<div class="modal fade" id="modalComentariosTarea" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form id="formComentarios"
+              asp-controller="Paso4"
+              asp-action="AgregarComentario"
+              method="post"
+              class="modal-content bg-dark text-white rounded-2xl shadow-lg">
+            @Html.AntiForgeryToken()
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Comentarios</h5>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+            </div>
+
+            <hr class="hr-violeta" />
+
+            <div class="modal-body">
+                <ul id="listaComentarios" class="list-group mb-3 bg-secondary bg-opacity-10 rounded">
+                    <!-- comentarios inyectados vía JS -->
+                </ul>
+
+                <textarea id="nuevoComentario"
+                          name="texto"
+                          class="form-control bg-secondary bg-opacity-10 text-white"
+                          rows="3"
+                          placeholder="Agregar un comentario…"></textarea>
+
+                <input type="hidden" id="comentarioTareaId" name="idTarea" />
+            </div>
+
+            <div class="modal-footer border-0">
+                <button type="submit" class="btn btn-crear">
+                    Comentar
+                </button>
+                <button type="button"
+                        id="btnModificarTarea"
+                        class="btn btn-crear"
+                        data-bs-dismiss="modal">
+                    Modificar Tarea
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        data-bs-target="#modalConfirmDelete"
+                        data-bs-toggle="modal">
+                    Eliminar Tarea
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="modalConfirmDelete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white rounded-2xl shadow-lg">
+            @* No necesita antiforgery, porque borrás vía JS con FormData que lo incluye *@
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body">
+                <p>¿Estás seguro que quieres eliminar esta tarea y todos sus comentarios?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" id="btnConfirmDelete" class="btn btn-danger">
+                    Sí, eliminar
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Error Fechas -->
+<div class="modal fade" id="modalErrorFechas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white rounded-2xl shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Error de fechas</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body">
+                <p>La fecha de inicio no puede ser posterior a la fecha fin.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Faltan Campos -->
+<div class="modal fade" id="modalFaltanCampos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white rounded-2xl shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Campos requeridos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body">
+                <!-- Aquí se inyectará dinámicamente:
+                     <p>Por favor completa:</p><ul><li>Fecha de inicio</li>…</ul> -->
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Faltan Campos (Tarea) -->
+<div class="modal fade" id="modalFaltanCamposTarea" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white rounded-2xl shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Campos incompletos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí inyectaremos la lista -->
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script src="~/js/paso4.js" asp-append-version="true"></script>
+    }
+

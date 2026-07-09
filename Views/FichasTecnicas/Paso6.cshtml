@@ -1,0 +1,555 @@
+﻿@model TesisPractica.Models.FichaTecnica
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Paso 6 – Seguimiento y cierre";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="~/css/Paso5.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Paso6.css" asp-append-version="true" />
+
+<div class="paso0-page">
+    <!-- Barra de pasos (igual que antes, pero con Ficha en la ruta) -->
+    <div class="steps-bar">
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso0", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 0
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso1", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 1
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso2", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 2
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso3", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 3
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso4", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 4
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso5", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 5
+        </div>
+        <div class="step step-active">
+            STEP 6
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index", "Paso7", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 7
+        </div>
+    </div>
+
+    @{
+        var paso5Ok = (ViewBag.Paso5Terminado is bool b && b);
+    }
+    <!-- Contenedor principal -->
+    <div class="paso0-content @( (ViewBag.Paso5Terminado as bool? ?? false) ? "" : "blurred" )">
+        <div class="paso0-header">
+            <h2 class="paso0-title">VERIFICACIÓN</h2>
+
+            @{
+                var fechaFinEstimada = Model.Paso6?.FechaFinEstimada; 
+                string restante;
+
+                if (fechaFinEstimada == null || fechaFinEstimada <= DateTime.Now)
+                {
+                    restante = "0 horas";
+                }
+                else
+                {
+                    var diff = fechaFinEstimada.Value - DateTime.Now;
+                    if (diff.TotalDays >= 1)
+                    {
+                        var dias = (int)Math.Floor(diff.TotalDays);
+                        restante = dias + (dias == 1 ? " día" : " días");
+                    }
+                    else
+                    {
+                        var horas = (int)Math.Floor(diff.TotalHours);
+                        restante = horas + (horas == 1 ? " hora" : " horas");
+                    }
+                }
+            }
+
+            <div class="paso0-timer">
+                <span>TIEMPO RESTANTE</span>
+                <span class="timer-value">@restante</span>
+            </div>
+        </div>
+
+        <hr class="hr-violeta" />
+
+        <form asp-controller="Paso6"
+              asp-action="Guardar"
+              asp-route-idFicha="@Model.IdFichaTecnica"
+              method="post"
+              id="formPaso6">
+            @Html.AntiForgeryToken()
+            <input asp-for="IdFichaTecnica" type="hidden" />
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <!-- VERIFICACIÓN DE LAS ACCIONES -->
+            <div class="mb-4">
+                <h5 class="titulo-categoria-causa titulo-verificacion">VERIFICACIÓN DE LAS ACCIONES</h5>
+                <div id="lista-verificacion" class="list-group">
+                    @foreach (var v in ViewBag.Verificaciones as List<TesisPractica.Models.VerificacionAccion>)
+                    {
+                        <div class="list-group-item text-white rounded-3 mb-2 px-3 py-2">
+                            <!-- 1) Contenedor flex para texto + botón -->
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <!-- Texto que abre modal -->
+                                <div class="editable-verif editable-verif-text flex-grow-1"
+                                     style="cursor:pointer"
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#modalVerificacionEfectividad"
+                                     data-id-verificacion="@v.IdVerificacion"
+                                     data-id-tarea="@v.IdTarea"
+                                     data-metodo="@v.MetodoConfirmacion"
+                                     data-fecha="@v.FechaVerificacion?.ToString("yyyy-MM-dd")"
+                                     data-efectiva="@v.EsEfectiva.ToString().ToLower()">
+                                    <div class="fw-semibold">@v.Tarea.AccionDeMejora</div>
+                                    <div class="d-flex align-items-center gap-3 mt-1">
+                                        <small class="text-muted">
+                                            @(v.EsEfectiva ? "EFECTIVA" : "NO EFECTIVA")
+                                        </small>
+                                        <small class="text-muted">
+                                            @v.FechaVerificacion?.ToString("dd/MM/yyyy")
+                                        </small>
+                                    </div>
+                                </div>
+
+                             
+                                    <input type="hidden" name="idVerificacion" value="@v.IdVerificacion" />
+                                    <button type="button"
+                                            class="btn btn-outline-primary btn-sm delete-analisis"
+                                            title="Eliminar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalConfirmarEliminarVerif"
+                                            data-verif="@v.IdVerificacion"
+                                            onclick="event.stopPropagation();">
+                                        🗑️ <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                               
+
+                            </div> 
+                        </div>
+                    }
+                </div>
+
+                <div class="text-end mt-2">
+                    <button type="button"
+                            id="btnAgregarVerif"
+                            class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalVerificacionEfectividad">
+                        + Agregar verificación
+                    </button>
+                </div>
+            </div>
+
+            <!-- CORRIDA DE PRODUCCIÓN -->
+            <div class="mb-4">
+                <h5 class="titulo-categoria-causa titulo-corrida">CORRIDA DE PRODUCCIÓN</h5>
+                <div id="lista-corrida" class="list-group">
+                    @if (ViewBag.UltimaCorrida != null)
+                    {
+                        var c = (TesisPractica.Models.CorridaProduccion)ViewBag.UltimaCorrida;
+
+                        <div class="list-group-item text-white rounded-3 mb-2 px-3 py-2 position-relative">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <!-- Datos -->
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">
+                                        Fecha: @c.FechaProduccion.ToString("dd/MM/yyyy")
+                                    </div>
+                                    <div class="d-flex align-items-center gap-3 mt-1">
+                                        <small class="text-muted">Producida: @c.CantidadProducida</small>
+                                        <small class="text-muted">OK: @c.CantidadOK</small>
+                                        <small class="text-muted">No OK: @c.CantidadNoOK</small>
+                                    </div>
+                                </div>
+
+                                    <input type="hidden" name="idCorrida" value="@c.IdProduccion" />
+                                    <button type="button"
+                                            class="btn btn-outline-primary btn-sm"
+                                            title="Eliminar corrida"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalConfirmarEliminarCorrida"
+                                            data-corrida="${idCorrida}"
+                                            onclick="event.stopPropagation();">
+                                        🗑️
+                                    </button>
+                                
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="text-end mt-2">
+                    <button type="button"
+                            id="btnAgregarCorrida"
+                            class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalCorrida">
+                        + Agregar corrida
+                    </button>
+                </div>
+            </div>
+
+
+            <hr class="hr-violeta" />
+
+            <!-- Bottom wrapper (datos de Paso6) -->
+            <div class="bottom-wrapper">
+                <div class="dates-row">
+                    <div class="date-field">
+                        <label class="form-label fw-bold text-uppercase">FECHA DE INICIO</label>
+                        <input id="FechaInicio"
+                                name="Paso6.FechaInicio"
+                               type="date"
+                               class="date-input"
+                               value="@Model.Paso6?.FechaInicio.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="date-field">
+                        <label class="form-label fw-bold text-uppercase">FECHA FIN</label>
+                        <input name="Paso6.FechaFin"
+                               type="date"
+                               class="date-input"
+                               value="@Model.Paso6?.FechaFin?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="date-field">
+                        <label class="form-label fw-bold text-uppercase">FECHA FIN ESTIMADA</label>
+                        <div class="date-input readonly-field">
+                            @Model.Paso6?.FechaFinEstimada?.ToString("yyyy-MM-dd")
+                        </div>
+                        <input name="Paso6.FechaFinEstimada"
+                               type="hidden"
+                               value="@Model.Paso6?.FechaFinEstimada?.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+
+                <div class="combo-row">
+                    <!-- RESPONSABLE -->
+                    <div class="combo-field">
+                        <label for="Responsable">RESPONSABLE</label>
+                        <select name="Paso6.Responsable"
+                                id="Responsable"
+                                class="form-select choices"
+                                asp-items="ViewBag.Responsables6"
+                                disabled="@(ViewBag.EsAuditor ? "disabled" : null)">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="Paso6.Responsable" class="text-danger"></span>
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="combo-field">
+                        <label for="IdEstado">ESTADO</label>
+                        <select name="Paso6.IdEstado"
+                                id="IdEstado"
+                                class="form-select choices">
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var item in (SelectList)ViewBag.Estados6)
+                            {
+                                var isSelected = item.Value == Model.Paso6?.IdEstado.ToString() ? "selected" : null;
+                                var isDisabled = ViewBag.EsAuditor
+                                && item.Text.Equals("Terminado", StringComparison.OrdinalIgnoreCase)
+                                ? "disabled"
+                                : null;
+                                <option value="@item.Value" selected="@isSelected" disabled="@isDisabled">
+                                    @item.Text
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="Paso6.IdEstado" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <a asp-controller="FichasTecnicas"
+                       asp-action="Detalle"
+                       asp-route-id="@Model.IdFichaTecnica"
+                       class="btn-custom-secondary">
+                        Cerrar
+                    </a>
+                    <button type="submit"
+                            id="btnGuardarPaso6"
+                            class="btn-custom-gradient @( (ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "no-permitido" )"
+                    @((ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "tabindex='-1'")>
+                        Guardar Paso 6
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- Modal Verificación de efectividad -->
+<div class="modal fade" id="modalVerificacionEfectividad" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-content-dark rounded-4 shadow-lg">
+            <form asp-controller="Paso6"
+                  asp-action="GuardarVerificacion"
+                  asp-route-idFicha="@Model.IdFichaTecnica"
+                  data-id-ficha="@Model.IdFichaTecnica"
+                  method="post"
+                  id="formVerificacionEfectividad">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="inputIdVerificacion" name="IdVerificacion" value="0" />
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title text-white fw-bold">Verificación de efectividad</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <hr class="hr-violeta" />
+                <div class="modal-body text-white">
+
+                    <!-- ACCIÓN DE MEJORA -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-uppercase small">Acción de mejora</label>
+                        <select id="Select_IdTarea" name="IdTarea" class="form-select js-choice" asp-items="ViewBag.AccionesMejora">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+
+                    <!-- ¿EFECTIVA? -->
+                    <div class="btn-group toggle-group" role="group">
+                        <input type="radio" class="btn-check" name="EsEfectiva" id="efectivaNo" value="false" autocomplete="off" checked>
+                        <label class="btn toggle-opcion" for="efectivaNo">NO</label>
+
+                        <input type="radio" class="btn-check" name="EsEfectiva" id="efectivaSi" value="true" autocomplete="off">
+                        <label class="btn toggle-opcion" for="efectivaSi">SÍ</label>
+                    </div>
+
+                    <!-- MÉTODO DE CONFIRMACIÓN -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-uppercase small">Método de confirmación</label>
+                        <input type="text" class="form-control" id="inputMetodoConfirmacion" name="MetodoConfirmacion"
+                               autocomplete="off" placeholder="Escribí el método de verificación..." />
+                    </div>
+
+                    <!-- FECHA DE VERIFICACIÓN -->
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold text-uppercase small">Fecha de verificación</label>
+                        <input type="date" class="form-control" id="inputFechaVerificacion" name="FechaVerificacion" />
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-violeta"
+                            id="btnGrabarVerificacion">
+                        GRABAR
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Corrida de producción -->
+<div class="modal fade" id="modalCorrida" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <!-- si querés tamaño grande -->
+        <div class="modal-content modal-content-dark rounded-4 shadow-lg">
+            <!-- mismas clases que tu otro modal -->
+            <!-- FORM y antiforgery token si es razor -->
+            <form id="formCorrida" method="post" action="/FichasTecnicas/@Model.IdFichaTecnica/Paso6/GuardarCorrida">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="IdFichaTecnica" value="@Model.IdFichaTecnica" />
+                <input type="hidden" name="IdProduccion" id="idProduccion" value="" />
+
+                <!-- HEADER -->
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title text-white fw-bold">Corrida de producción</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <!-- HR VIOLETA igual que en el modal de verificación -->
+                <hr class="hr-violeta" />
+
+                <!-- BODY -->
+                <div class="modal-body text-white">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="cantidadProducida" class="form-label fw-semibold text-uppercase small">Cantidad producida</label>
+                            <input type="number" min="0" value="0"
+                                   class="form-control bg-secondary border-0 text-white"
+                                   id="cantidadProducida"
+                                   name="CantidadProducida">
+                        </div>
+                        <div class="col-md-4 d-flex flex-column align-items-end">
+                            <label class="form-label fw-semibold text-uppercase small">Nivel de conformidad</label>
+                            <div id="nivelConformidad" class="display-4 text-success">0%</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="cantidadOk" class="form-label fw-semibold text-uppercase small">Cantidad OK</label>
+                            <input type="number" min="0" value="0"
+                                   class="form-control bg-secondary border-0 text-white"
+                                   id="cantidadOk"
+                                   name="CantidadOk">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cantidadNoOk" class="form-label fw-semibold text-uppercase small">Cantidad NO OK</label>
+                            <input type="number" min="0" value="0"
+                                   class="form-control bg-secondary border-0 text-white"
+                                   id="cantidadNoOk"
+                                   name="CantidadNoOk"
+                                   readonly>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="fechaProduccion" class="form-label fw-semibold text-uppercase small">Fecha de producción</label>
+                            <input type="date"
+                                   class="form-control bg-secondary border-0 text-white"
+                                   id="fechaProduccion"
+                                   name="FechaProduccion"
+                                   value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-violeta" id="btnGuardarCorrida">Grabar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de advertencia personalizada -->
+<div class="modal fade paso0-modal-denegado" id="modalPermisoGuardar" tabindex="-1" aria-labelledby="modalPermisoGuardarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalPermisoGuardarLabel">
+                    Permiso denegado
+                </h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body custom-modal-body">
+                Solo el <b>piloto</b>, el <b>responsable</b> o un <b>supervisor</b> pueden guardar los cambios.
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de error para fechas -->
+<div class="modal fade" id="modalErrorFechas" tabindex="-1" aria-labelledby="modalErrorFechasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalErrorFechasLabel">
+                    Error en las fechas
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body">
+                La <b>fecha de inicio</b> debe ser menor o igual a la <b>fecha de fin</b>.<br>
+                Por favor, corregí las fechas para continuar.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de campos obligatorios faltantes -->
+<div class="modal fade" id="modalFaltanCampos" tabindex="-1" aria-labelledby="modalFaltanCamposLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalFaltanCamposLabel">Campos incompletos</h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta">
+            <div class="modal-body custom-modal-body">
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal confirmar eliminar verificación -->
+<div class="modal fade" id="modalConfirmarEliminarVerif" tabindex="-1" aria-labelledby="modalConfirmEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#141724; color:#fff; border:none; border-radius:1.25rem;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="modalConfirmEliminarLabel">Eliminar verificación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres eliminar esta verificación?
+            </div>
+            <div class="modal-footer border-0">
+                <form id="formEliminarVerificacion"
+                      method="post"
+                      action="@Url.Action("EliminarVerificacion", "Paso6", new { idFicha = Model.IdFichaTecnica })">
+                    @Html.AntiForgeryToken()
+                    <!-- aquí rellenaremos idVerificacion vía JS -->
+                    <input type="hidden" name="idVerificacion" id="inputDeleteVerif" value="" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnConfirmarEliminarVerif" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal confirmar eliminar Corrida -->
+<div class="modal fade" id="modalConfirmarEliminarCorrida" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#141724; color:#fff; border:none; border-radius:1.25rem;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Eliminar corrida</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que querés eliminar esta corrida de producción?
+            </div>
+            <div class="modal-footer border-0">
+                <form id="formEliminarCorrida"
+                      method="post"
+                      action="/FichasTecnicas/@Model.IdFichaTecnica/Paso6/EliminarCorrida">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="idCorrida" id="inputDeleteCorrida" />
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="idCorrida" id="inputDeleteCorrida" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger" id="btnConfirmarEliminarCorrida">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/Paso6.js"></script>

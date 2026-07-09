@@ -1,0 +1,358 @@
+@using TesisPractica.Models
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Ficha Técnica";
+    var usuarioRol = ViewBag.RolUsuario as string; 
+}
+
+
+
+<link rel="stylesheet" href="~/css/FichaTecnica.css" asp-append-version="true" />
+
+
+<h2 class="text-white mb-4 ms-4 mt-4">Ficha técnica</h2>
+
+<div class="ficha-tecnica-wrapper bg-color-principal p-4 rounded mx-4">
+    <div class="d-flex justify-content-end mt-1 mb-3">
+        <a href="#"
+           class="link-violeta"
+           onclick="abrirInfoNoConformidad(@Model.NoConformidad.IdNoConformidad)">
+            <i class="bi bi-eye me-1"></i> Ver No Conformidad
+        </a>
+    </div>
+
+    <div class="row g-3 align-items-stretch mb-4">
+
+        <!-- Columna 1: Piloto -->
+        <div class="col-md-3 d-flex flex-column">
+            <div class="bg-color-secundario p-3 rounded text-white
+                d-flex flex-column flex-fill">
+                @* —> Ya va a rellenar toda la altura de la columna *@
+                @if (Model.Equipo != null)
+                {
+                    <h6 class="mb-2">Piloto:</h6>
+                    <p class="mb-2">@ViewBag.Piloto</p>
+                    <hr class="hr-violeta my-2" />
+                    <h6 class="mb-2">Miembros:</h6>
+                    <ul class="mb-0">
+                        @foreach (var miembro in ViewBag.Miembros as List<string>)
+                        {
+                            <li>@miembro</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="d-flex flex-column flex-fill justify-content-end align-items-center pb-3">
+                        <button onclick="abrirModalAsignarEquipo(@Model.IdFichaTecnica)"
+                                class="btn-custom-asignar">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Asignar ficha técnica
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Columna 2: NC -->
+        <div class="col-md-6 d-flex flex-column">
+            <div class="bg-color-secundario p-3 rounded text-white
+                d-flex flex-column justify-content-between flex-fill">
+                @* —> También estira igual que la de Piloto *@
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>Pieza:</strong> @ViewBag.Pieza</p>
+                        <p><strong>Cliente:</strong> @ViewBag.Cliente</p>
+                        <p><strong>Proceso:</strong> @ViewBag.Proceso</p>
+                    </div>
+                    <div class="col-6">
+                        <p><strong>Defectos:</strong></p>
+                        <ul class="mb-2">
+                            @foreach (var def in ViewBag.Defectos as List<string>)
+                            {
+                                <li>@def</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="hr-violeta" />
+                <p class="mb-0">
+                    <strong>Fecha de creación:</strong>
+                    @Model.FechaCreacion.ToString("dd/MM/yyyy")
+                </p>
+            </div>
+        </div>
+
+        <!-- Columna 3: Código y Fecha -->
+        <div class="col-md-3 d-flex flex-column">
+            <div class="bg-color-secundario p-3 rounded text-white mb-3
+                d-flex flex-column justify-content-center flex-fill">
+                <h6 class="fw-bold mb-2">
+                    <i class="bi bi-hash me-1"></i> Código
+                </h6>
+                <div class="codigo-box text-white fw-bold bg-violeta-titulo
+                  text-center rounded py-2">
+                    FC-@Model.IdFichaTecnica
+                </div>
+            </div>
+            <div class="bg-color-secundario p-3 rounded text-white">
+                <h6 class="fw-bold mb-2">
+                    <i class="bi bi-calendar-event me-1"></i> Fecha límite
+                </h6>
+               
+                @if (usuarioRol == "supervisor")
+                {
+                    <input type="date"
+                           class="form-control custom-date-input"
+                           value="@(Model.FechaFinEstimada?.ToString("yyyy-MM-dd") ?? "")"
+                           onchange="actualizarFechaLimite(@Model.IdFichaTecnica)" />
+                }
+                else
+                {
+                    <p class="mb-0">
+                        @Model.FechaFinEstimada?.ToString("dd/MM/yyyy") ?? "—"
+                    </p>
+                }
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- CONTENEDOR DEL BLOQUE DE STEPS -->
+<div class="steps-container bg-color-principal text-white p-4 mt-5 ms-4 me-4 mb-5 rounded @(ViewBag.TieneEquipo ? "" : "steps-disabled")">
+
+
+    <!-- Título y Ver detalle -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">STEPS</h5>
+        <div class="d-flex align-items-center">
+            <i class="bi bi-eye me-2"></i>
+            <span class="small">Ver detalle</span>
+        </div>
+    </div>
+
+    <!-- Grilla de 8 steps (4 izq - 4 der) -->
+    <div class="row g-3">
+        <!-- LADO IZQUIERDO -->
+        <div class="col-md-6">
+            <!-- Paso 0: recuadro clickeable -->
+            <div class="step-box clickable" onclick="location.href='@Url.Action("Index","Paso0", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">0</div>
+
+                <div class="step-content">
+                    <div class="step-title">CONTENCIÓN</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">
+                            @(!string.IsNullOrEmpty(ViewBag.AccionContencion) ? ViewBag.AccionContencion : "-")
+                        </div>
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @((ViewBag.FechaInicioPaso0 as string) ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso0 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Paso 1: recuadro clickeable -->
+            <div class="step-box clickable" onclick="location.href='@Url.Action("Index","Paso1", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">1</div>
+                <div class="step-content">
+                    <div class="step-title">VERIFICACIÓN</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">
+                            @(ViewBag.QueSucedePaso1 ?? "-")
+                        </div>
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso1 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso1 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 2: recuadro clickeable -->
+            <div class="step-box clickable"
+                 onclick="location.href='@Url.Action("Index","Paso2", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">2</div>
+                <div class="step-content">
+                    <div class="step-title">ANÁLISIS DE CAUSA</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">—</div> <!-- Este paso no tiene “acción” por ahora -->
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso2 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso2 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 3: recuadro clickeable -->
+            <div class="step-box clickable"
+                 onclick="location.href='@Url.Action("Index","Paso3", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">3</div>
+                <div class="step-content">
+                    <div class="step-title">ANÁLISIS CAUSA / RAÍZ</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">
+                            ANÁLISIS 5 PORQUÉ
+                        </div>
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso3 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso3 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LADO DERECHO -->
+
+        <div class="col-md-6">
+
+            <!-- Paso 4: recuadro clickeable -->
+            <div class="step-box clickable"
+                 onclick="location.href='@Url.Action("Index","Paso4", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">4</div>
+                <div class="step-content">
+                    <div class="step-title">PLAN DE ACCIÓN</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">
+                            Tareas a realizar
+                        </div>
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso4 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso4 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Paso 5: recuadro clickeable -->
+            <div class="step-box clickable" onclick="location.href='@Url.Action("Index", "Paso5", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">5</div>
+                <div class="step-content">
+                    <div class="step-title">DISEÑO</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">-</div> 
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso5 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso5 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 6: recuadro clickeable -->
+            <div class="step-box clickable" onclick="location.href='@Url.Action("Index", "Paso6", new { idFicha = Model.IdFichaTecnica })'">
+                <div class="step-num fw-bold">6</div>
+                <div class="step-content">
+                    <div class="step-title">VERIFICACIÓN</div>
+                    <div class="step-details">
+                        <div class="step-accion-contencion">@(ViewBag.EstadoPaso6 ?? "-")</div>
+                        <div class="step-fecha-responsable">
+                            <div class="step-fecha-inicio">
+                                @(ViewBag.FechaInicioPaso6 ?? "-")
+                            </div>
+                            <div class="step-responsable">
+                                @(ViewBag.ResponsablePaso6 ?? "-")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-num fw-bold">7</div>
+                <div class="step-title">ESTANDARIZACIÓN</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Información No Conformidad -->
+<div class="modal fade" id="modalInfoNC" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-desenfocado text-white bg-color-secundario">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">
+                    Información sobre la No Conformidad <span id="tituloNC"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body" id="contenidoModalNC">
+                <!-- Contenido cargado por JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Asignar Equipo -->
+<div class="modal fade" id="modalAsignarEquipo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-color-secundario text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Seleccionar equipo</h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta my-2" />
+            <div class="modal-body">
+                <select id="selectEquipos" class="form-select">
+                    <option value="">-- Elegí un equipo --</option>
+                    @foreach (var eq in ViewBag.EquiposSupervisor as List<Equipo>)
+                    {
+                        <option value="@eq.IdEquipo">@eq.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelarAsignar" type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button id="btnConfirmarAsignar" type="button"
+                        class="btn btn-primary">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+
+<script src="~/js/FichaTecnica.js"></script>

@@ -1,0 +1,513 @@
+﻿/* 1) Contenedor principal con fondo #141724 */
+#contenedorNoConformidad {
+    background-color: #141724 !important;
+    border-radius: 8px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+    /* 2) Inputs y selects nativos dentro del contenedor, fondo #212529, altura 2.5rem y bordes redondeados */
+    #contenedorNoConformidad .form-control,
+    #contenedorNoConformidad .form-select {
+        background-color: #212529 !important;
+        color: #ffffff !important;
+        border: 1px solid #212529 !important;
+        height: 2.5rem !important;
+        line-height: 1.5 !important;
+        padding: 0.375rem 0.75rem !important;
+        box-sizing: border-box;
+        border-radius: 0.25rem;
+    }
+
+    /* 3) Estilo del <hr> dentro del contenedor, en violeta */
+    #contenedorNoConformidad hr {
+        border-top: 2px solid #7B3FE4;
+    }
+
+/* 4) Estilos para Choices.js */
+.choices {
+    width: 100%;
+}
+
+.choices__inner {
+    background-color: #212529 !important;
+    border: 1px solid #212529 !important;
+    color: #ffffff !important;
+    min-height: 2.5rem !important;
+    display: flex;
+    align-items: center;
+    line-height: 1.5 !important;
+    padding: 0.375rem 0.75rem !important;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+}
+
+.choices__list--dropdown .choices__item--choice {
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    min-height: 1rem !important; /* Ajusta según tu gusto */
+}
+
+
+
+.choices__list--dropdown {
+    background-color: #212529 !important;
+    border: 1px solid #141724 !important;
+}
+
+.choices__item--choice {
+    background-color: #212529;
+    color: #fff;
+}
+
+    .choices__item--choice.is-highlighted {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: #fff !important;
+    }
+
+/* Título: separarlo del sidebar */
+.titulo-no-conf {
+    margin-left: 25px; /* Aumentado para separarlo más del sidebar */
+
+    margin-top: 1rem; /* Añadido margen superior */
+}
+
+/* Aumenta la separación entre columnas */
+.form-row-separado {
+    gap: 4rem; /* Aumentado el gap a 4rem */
+}
+
+/* Radio buttons en color violeta */
+input[type="radio"] {
+    accent-color: #2A1A5D;
+}
+
+/* Link de "Agregar más piezas" en color #2A1A5D */
+.link-agregar-pieza {
+    color: #2A1A5D !important;
+    text-decoration: none;
+}
+
+    .link-agregar-pieza:hover {
+        text-decoration: underline;
+    }
+
+
+/* Quita el contorno azul por defecto y aplica un borde/box-shadow violeta (#2A1A5D) */
+#contenedorNoConformidad .form-control:focus,
+#contenedorNoConformidad .form-select:focus {
+    outline: none !important;
+    border-color: #2A1A5D !important;
+    box-shadow: 0 0 0 0.2rem rgba(42, 26, 93, 0.25) !important; /* Ajusta la opacidad y el tamaño a tu gusto */
+}
+
+/* Sección inferior: Fechas y Botón "Cargar" */
+.fechas-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2A1A5D;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.fechas-container {
+    display: flex;
+    gap: 1rem; /* Ajusta el espacio entre los inputs */
+    align-items: flex-start;
+}
+
+/* Cada bloque de fecha */
+.fecha-item label {
+    color: #fff;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+
+.fecha-input {
+    background-color: #212529 !important;
+    color: #fff !important;
+    border: #2A1A5D !important;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+    height: 2.5rem;
+    width: 150px; /* Ajusta el ancho según necesites */
+    box-sizing: border-box;
+}
+
+.fecha-vencimiento {
+    color: red !important;
+}
+
+/* Opcional: Si deseas personalizar el botón "Cargar" */
+.crear-btn {
+    background-color: #2A1A5D !important; /* Fondo base */
+    color: #ffffff !important; /* Texto en blanco */
+    border: none;
+    transition: background 0.3s ease; /* Transición suave */
+}
+
+    .crear-btn:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    }
+
+
+
+.bloque-inferior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    border-radius: 8px;
+}
+
+.col-derecha {
+    background-color: #141724; /* Color de fondo del contenedor */
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: 1rem;
+}
+
+.col-izquierda {
+    flex: 1;
+    background-color: #1C123F;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Desactiva la apariencia nativa en navegadores modernos */
+input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Ajusta el tamaño y la forma */
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #2A1A5D;
+    border-radius: 50%;
+    background-color: transparent; /* Fondo inicial transparente */
+
+    cursor: pointer;
+    position: relative;
+    margin-right: 0.5rem; /* Ajusta la separación del texto */
+}
+
+    /* Elimina el foco azul o contorno por defecto */
+    input[type="radio"]:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    /* Cuando el radio está marcado, se llena el círculo de #2A1A5D */
+    input[type="radio"]:checked {
+        background-color: #2A1A5D;
+        border-color: #2A1A5D;
+    }
+
+        /* Punto interior blanco que simula el "check" */
+        input[type="radio"]:checked::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 0.4rem;
+            height: 0.4rem;
+            border-radius: 50%;
+            background-color: #fff; /* El punto central */
+        }
+
+
+/* Ajustar el ícono del calendario en inputs date (Chrome, Edge, Opera, Safari) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(35%) sepia(55%) saturate(1300%) hue-rotate(245deg) brightness(95%) contrast(95%);
+}
+
+.fecha-input:focus {
+    outline: none !important;
+    border-color: #141724 !important;
+    box-shadow: 0 0 0 0.2rem rgba(42, 26, 93, 0.25) !important;
+}
+
+/* Cambiar el color del texto del cuerpo del modal */
+.modal-content .modal-body p {
+    color: white; /* negro, por ejemplo */
+}
+
+/* Cambiar el color de fondo del modal */
+/* Sobrescribir el fondo del contenido del modal */
+.modal-content {
+    background-color: #141724 !important; /* Fondo oscuro */
+    border: none !important; /* Quitar borde */
+}
+
+/* Cambiar color de texto en el header, body y footer del modal */
+.modal-header .modal-title,
+.modal-body,
+.modal-footer {
+    color: #ffffff !important;
+}
+
+/* Cambiar el color del botón de cierre (la "X") */
+.btn-close {
+    filter: invert(100%); /* Hace que la X sea blanca */
+    /* O usa otro método si quieres un ícono personalizado */
+}
+
+/* Botones en el footer del modal */
+.modal-footer .btn {
+    background-color: #1C123F !important; /* Botones morados */
+    color: #ffffff !important;
+    border: none !important;
+}
+
+    /* Hover opcional para los botones */
+    .modal-footer .btn:hover {
+        background-color: #2a1d5a !important; /* Un tono más claro */
+    }
+
+/* Ajustar la opacidad del fondo detrás del modal (overlay) */
+.modal-backdrop.show {
+    opacity: 0.8; /* o el valor que desees para la transparencia */
+}
+
+/* Cambiar el borde inferior del header del modal */
+.modal-header {
+    border-bottom: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+}
+
+/* Cambiar el borde superior del footer del modal */
+.modal-footer {
+    border-top: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+}
+
+/* Si deseas un borde alrededor de todo el modal */
+.modal-content {
+    border: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+}
+
+
+/* Cuando el select de estado tiene un valor, .estado-has-value estará presente */
+.estado-choices.estado-has-value .choices__inner {
+    background: linear-gradient(90deg, #1C123F 0%, #4F2BD0 100%) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.estado-choices.estado-has-value .choices__arrow {
+    fill: #fff !important;
+}
+
+
+/* Para prioridad Alta */
+.prioridad-choices.prioridad-alta .choices__inner {
+    background: #40131E !important;
+    color: #E52627 !important;
+    border: none !important;
+}
+
+/* Para prioridad Media */
+.prioridad-choices.prioridad-media .choices__inner {
+    background: #EAE59D !important;
+    color: #CFCB00 !important;
+    border: none !important;
+}
+
+/* Para prioridad Baja */
+.prioridad-choices.prioridad-baja .choices__inner {
+    background: #7A84E6 !important;
+    color: #0001EA !important;
+    border: none !important;
+}
+
+.fondo-violeta {
+    background-color: #1C123F; /* Fondo violeta */
+    color: #fff; /* Texto en blanco */
+    display: inline-block; /* Ajusta el ancho al contenido */
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    border-radius: 0.25rem; /* Bordes redondeados */
+    font-size: 1.25rem; /* Texto un poco más grande */
+    font-weight: bold; /* Texto en negrita */
+    text-transform: uppercase; /* Opcional, si quieres FCA-0 en mayúsculas */
+}
+
+.btn-volver {
+    background-color: #1C123F !important;
+    color:white;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+    margin-bottom: 0rem;
+    border:0px;
+}
+
+    /* Si querés que el hover sea más notorio y personalizado */
+    .btn-volver:hover {
+        opacity: 0.9;
+        transform: scale(1.02);
+        transition: all 0.2s ease-in-out;
+        color: white;
+        background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    }
+
+/* Fondo de las etiquetas seleccionadas (Pintura, etc.) */
+.choices__list--multiple .choices__item {
+    background-color: #1C123F !important;
+    border: none;
+    color: white;
+}
+
+#selectDefecto ~ .choices .choices__inner {
+    background-color: #141724 !important;
+    color: white !important;
+    border: none !important;
+}
+
+#selectDefecto ~ .choices .choices__list--multiple .choices__item {
+    background-color: #1C123F !important;
+    color: white !important;
+    border: none !important;
+}
+
+.choices__input.choices__input--cloned {
+    background-color: #141724 !important;
+    color: white !important;
+    border: none !important;
+}
+
+#selectCausa ~ .choices .choices__inner {
+    background-color: #141724 !important;
+    color: white !important;
+    border: none !important;
+}
+
+#selectCausa ~ .choices .choices__list--multiple .choices__item {
+    background-color: #1C123F !important;
+    color: white !important;
+    border: none !important;
+}
+
+.modal-asignar .form-select,
+.modal-asignar .form-control,
+.modal-asignar .choices__inner {
+    background-color: #212529 !important;
+    color: #fff !important;
+    border: 1px solid #212529 !important;
+    border-radius: 0.25rem;
+    height: 2.5rem !important;
+    padding: 0.375rem 0.75rem !important;
+}
+
+.modal-asignar .choices__list--dropdown {
+    background-color: #212529 !important;
+    border: 1px solid #141724 !important;
+}
+
+.modal-asignar .choices__item--choice {
+    background-color: #212529;
+    color: #fff;
+}
+
+    .modal-asignar .choices__item--choice.is-highlighted {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: #fff !important;
+    }
+
+/* Botones */
+.modal-asignar .modal-footer .btn {
+    background-color: #1C123F !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+    .modal-asignar .modal-footer .btn:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    }
+
+/* 1) Borde violeta al hacer foco en el dropdown de Equipo */
+#modalAsignarEquipo .choices__inner:focus,
+#modalAsignarEquipo .choices__inner.is-open {
+    border-color: #2A1A5D !important;
+    box-shadow: 0 0 0 0.2rem rgba(42, 26, 93, 0.4) !important;
+}
+
+/* 2) Hover/degradado violetas en cada opción del dropdown */
+#modalAsignarEquipo .choices__list--dropdown .choices__item--choice:hover,
+#modalAsignarEquipo .choices__list--dropdown .choices__item--choice.is-highlighted {
+    background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    color: #fff !important;
+}
+
+/* 3) Fondo de la lista de usuarios en modal (ul.list-group) */
+#modalAsignarEquipo #listaMiembros {
+    background-color: #212529;
+    border: 1px solid #141724;
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+    /* 4) Ítems de la lista de usuarios */
+    #modalAsignarEquipo #listaMiembros .list-group-item {
+        background-color: transparent;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        transition: background 0.2s;
+    }
+
+        #modalAsignarEquipo #listaMiembros .list-group-item:hover {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            color: #fff;
+        }
+
+        /* 1) Elimina el hover de los miembros */
+        #modalAsignarEquipo #listaMiembros .list-group-item:hover {
+            background: transparent !important;
+            color: #fff !important;
+            cursor: default;
+        }
+
+    /* 2) Asegúrate de que las <li> no respondan a pointer-events */
+    #modalAsignarEquipo #listaMiembros .list-group-item {
+        pointer-events: none;
+    }
+
+/* 3) Mantén sólo el hover degradado en Choices.js */
+#modalAsignarEquipo .choices__list--dropdown .choices__item--choice:hover,
+#modalAsignarEquipo .choices__list--dropdown .choices__item--choice.is-highlighted {
+    background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    color: #fff !important;
+}
+
+
+
+/* 1) Borde violeta en el campo cuando abrir/focus */
+#choices-selectEquipos-container .choices__inner.is-open,
+#choices-selectEquipos-container .choices__inner.is-focused {
+    border-color: #2A1A5D !important;
+    box-shadow: 0 0 0 0.2rem rgba(42, 26, 93, 0.4) !important;
+}
+
+/* 2) Degradado violet-azul sobre las opciones sólo de Equipos */
+#choices-selectEquipos-container
+.choices__list--dropdown
+.choices__item--choice.is-highlighted,
+#choices-selectEquipos-container
+.choices__list--dropdown
+.choices__item--choice:hover {
+    background: linear-gradient(90deg, #2575fc, #6a11cb) !important;
+    color: #fff !important;
+}
+
+
+

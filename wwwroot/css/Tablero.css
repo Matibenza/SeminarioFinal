@@ -1,0 +1,73 @@
+﻿/* Título principal */
+.paso0-header .paso0-title {
+    font-size: 2.5rem; /* antes era ~1.5rem */
+    line-height: 1.2;
+}
+
+/* Cabeceras de columna */
+.column-header {
+    font-size: 1.5rem; /* antes ~1.1rem */
+    padding: 1rem 1.25rem;
+}
+
+/* Texto de las tarjetas */
+.task-card h5 {
+    font-size: 1.25rem; /* antes ~1rem */
+}
+
+.task-card small {
+    font-size: 1rem; /* antes ~0.875rem */
+}
+
+/* Botón Crear */
+#btnCrearTarea {
+    font-size: 1.1rem; /* agranda un poco el texto */
+    padding: 0.6rem 1.2rem;
+}
+
+/* Ajusta también los modales si quieres: */
+.modal-content .modal-title {
+    font-size: 1.75rem;
+}
+
+.modal-content .form-label {
+    font-size: 1.1rem;
+}
+
+/* Aplica el fondo oscuro a todo el contenedor principal */
+.main-content,
+.paso0-page {
+    background-color: #212529;
+}
+
+/* Asegura también que el body herede ese fondo */
+body {
+    background-color: #212529;
+}
+
+/* Si usas una clase wrapper para el layout */
+.wrapper {
+    background-color: #212529;
+}
+
+/* 1) Permitir puntero sobre selects deshabilitados */
+.form-select:disabled {
+    pointer-events: auto !important;
+    /* opcionalmente restauras la opacidad si la tenías bajada */
+    opacity: 1 !important;
+}
+
+/* 2) En caso de que uses Choices.js y te haya envuelto el select, fuerza que el wrapper también acepte clicks */
+.choices__inner {
+    pointer-events: auto;
+}
+
+.board-wrapper {
+    background-color: #141724; 
+    border-radius: 8px; /* bordes suaves */
+}
+
+    .board-wrapper .board-column {
+        /* opcional: separar columnas un poco del fondo */
+        margin: 0 4px;
+    }

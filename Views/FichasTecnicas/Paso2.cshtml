@@ -1,0 +1,456 @@
+﻿@using TesisPractica.Models
+@using System.Text.Json
+@model TesisPractica.Models.Paso2AnalisisCausa
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Paso 2 – Análisis de causa";
+
+    // 1) Listado tipado de causas
+    var causas = ViewBag.CausasExistentes as List<CausaPaso>
+                 ?? new List<CausaPaso>();
+
+    // 2) DTO plano para tu JS (para evitar ciclos en JsonSerializer)
+    var causasDto = causas
+       .Select(c => new
+       {
+           c.IdCausa,
+           c.IdCategoria5M,
+           c.DescripcionCausa,
+           c.ClasificacionImpacto,
+           c.ResultadoVerificacion,
+           CategoriaDescripcion = c.Categoria5M?.Descripcion
+       })
+       .ToList();
+
+    // 3) Serializamos sólo ese DTO
+    var jsonCausas = JsonSerializer.Serialize(causasDto);
+}
+
+<input id="CausasJson" type="hidden" value='@jsonCausas' />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="~/css/Paso2.css" asp-append-version="true" />
+
+<div class="paso0-page">
+    <!-- Barra de pasos (igual que antes, pero con Ficha en la ruta) -->
+    <div class="steps-bar">
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso0", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 0
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso1", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 1
+        </div>
+        <div class="step step-active">STEP 2</div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso3", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 3
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso4", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 4
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso5", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 5
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso6", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 6
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso7", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 7
+        </div>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div class="paso0-content @( (ViewBag.Paso1Terminado as bool? ?? false) ? "" : "blurred" )">
+        <div class="paso0-header">
+            <h2 class="paso0-title">ANÁLISIS DE CAUSA</h2>
+            @{
+                var fechaFinEstimada = Model.FechaFinEstimada;
+                string restante;
+
+                if (fechaFinEstimada == null || fechaFinEstimada <= DateTime.Now)
+                {
+                    restante = "0 horas";
+                }
+                else
+                {
+                    var diff = fechaFinEstimada.Value - DateTime.Now;
+
+                    if (diff.TotalDays >= 1)
+                    {
+                        var dias = (int)Math.Floor(diff.TotalDays);
+                        restante = dias + (dias == 1 ? " día" : " días");
+                    }
+                    else
+                    {
+                        var horas = (int)Math.Floor(diff.TotalHours);
+                        restante = horas + (horas == 1 ? " hora" : " horas");
+                    }
+                }
+            }
+            <div class="paso0-timer">
+                <span>TIEMPO RESTANTE</span>
+                <span class="timer-value">@restante</span>
+            </div>
+        </div>
+
+        <hr class="hr-violeta" />
+        <form asp-controller="Paso2"
+              asp-action="Index"
+              asp-route-idFicha="@Model.IdFichaTecnica"
+              method="post"
+              id="formPaso2">
+            @Html.AntiForgeryToken()
+            <input asp-for="IdFichaTecnica" type="hidden" />
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+
+            <!-- Ocurrencias -->
+            <div class="mb-4">
+                <h5 class="titulo-categoria-causa">Ocurrencias</h5>
+                <div id="lista-ocurrencia" class="list-group">
+                    @foreach (var c in causas.Where(x => x.ClasificacionImpacto == 0))
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="causa-text fw-bold">@c.DescripcionCausa</div>
+                                <div class="causa-category small">@c.Categoria5M?.Descripcion</div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger btn-eliminar-causa"
+                                    data-id="@c.IdCausa"
+                                    title="Eliminar">
+                                🗑️
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- No detección -->
+            <div class="mb-4">
+                <h5 class="titulo-categoria-causa">No detección</h5>
+                <div id="lista-no-deteccion" class="list-group">
+                    @foreach (var c in causas.Where(x => x.ClasificacionImpacto == 1))
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="causa-text fw-bold">@c.DescripcionCausa</div>
+                                <div class="causa-category small">@c.Categoria5M?.Descripcion</div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm  btn-outline-primary btn-eliminar-causa"
+                                    data-id="@c.IdCausa"
+                                    title="Eliminar">
+                                🗑️
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <div class="text-end mt-3">
+                <input type="hidden"
+                       id="esNuevoPaso2"
+                       value="@((ViewBag.EsNuevo ?? false).ToString())" />
+                <button id="btnNuevaCausa" type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalCausa">
+                    + Agregar
+                </button>
+            </div>
+
+            <hr class="hr-violeta" />
+
+            <!-- Bottom wrapper (datos de Paso2AnalisisCausa) -->
+            <div class="bottom-wrapper">
+                <div class="dates-row">
+                    <div class="date-field">
+                        <label asp-for="FechaInicio"
+                               class="form-label fw-bold text-uppercase">FECHA DE INICIO</label>
+                        <input asp-for="FechaInicio"
+                               id="FechaInicio"
+                               type="date"
+                               class="date-input" />
+                    </div>
+                    <div class="date-field">
+                        <label asp-for="FechaFin"
+                               class="form-label fw-bold text-uppercase">FECHA FIN</label>
+                        <input asp-for="FechaFin"
+                               id="FechaFin"
+                               type="date"
+                               class="date-input" />
+                    </div>
+                    <div class="date-field">
+                        <label asp-for="FechaFinEstimada"
+                               class="form-label fw-bold text-uppercase">FECHA FIN ESTIMADA</label>
+                        <div class="date-input readonly-field">
+                            @Model.FechaFinEstimada?.ToString("yyyy-MM-dd")
+                        </div>
+                        <input asp-for="FechaFinEstimada" type="hidden"
+                               asp-format="{0:yyyy-MM-dd}" />
+                    </div>
+                </div>
+                <div class="combo-row">
+                    <!-- RESPONSABLE -->
+                    <div class="combo-field">
+                        <label for="Responsable">RESPONSABLE</label>
+                        <select asp-for="Responsable"
+                                id="Responsable"
+                                class="form-select choices"
+                                asp-items="ViewBag.Responsables"
+                                disabled="@(ViewBag.EsAuditor ? "disabled" : null)">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="Responsable" class="text-danger"></span>
+                    </div>
+
+                    <!-- ESTADO -->
+                    <div class="combo-field">
+                        <label for="IdEstado">ESTADO</label>
+                        <select asp-for="IdEstado"
+                                id="IdEstado"
+                                class="form-select choices">
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var item in (SelectList)ViewBag.Estados)
+                            {
+                                var isSelected = item.Value == Model.IdEstado.ToString() ? "selected" : null;
+                                var isDisabled = ViewBag.EsAuditor
+                                && item.Text.Equals("Terminado", StringComparison.OrdinalIgnoreCase)
+                                ? "disabled"
+                                : null;
+                                <option value="@item.Value"
+                                        selected="@isSelected"
+                                        disabled="@isDisabled">
+                                    @item.Text
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdEstado" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+
+           
+                <div class="form-actions mt-4">
+                    <a asp-controller="FichasTecnicas"
+                       asp-action="Detalle"
+                       asp-route-id="@Model.IdFichaTecnica"
+                       class="btn-custom-secondary">
+                        Cerrar
+                    </a>
+                    <button type="submit"
+                            id="btnGuardarPaso2"
+                            class="btn-custom-gradient @( (ViewBag.EsPiloto||ViewBag.EsResponsable||ViewBag.EsSupervisor) ? "" : "no-permitido" )"
+                    @((ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "tabindex='-1'")>
+                        Guardar Paso 2
+                    </button>
+                </div>
+          
+        </form>
+    </div>
+</div>
+
+<!-- Modal Agregar/Editar Causa -->
+<div class="modal fade" id="modalCausa" tabindex="-1" aria-labelledby="modalCausaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Paso2"
+                  asp-action="CrearCausa"
+                  asp-route-idFicha="@Model.IdFichaTecnica"
+                  method="post">
+                @Html.AntiForgeryToken()
+
+                 <input type="hidden" name="NuevaCausa.IdCausa" id="IdCausa" value="0" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCausaLabel">Agregar Causa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Categoría 5M -->
+                    <div class="mb-3">
+                        <label for="categoria5M" class="form-label">Tipo de problema (5M)</label>
+                        <select id="categoria5M"
+                                name="NuevaCausa.IdCategoria5M"
+                                asp-items="ViewBag.Categorias5M"
+                                class="form-select mb-3 choices">
+                            <option value="">-- Seleccione categoría --</option>
+                        </select>
+                        <span class="text-danger"
+                              data-valmsg-for="NuevaCausa.IdCategoria5M"
+                              data-valmsg-replace="true"></span>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcionCausa" class="form-label">Causa</label>
+                        <textarea id="descripcionCausa"
+                                  name="NuevaCausa.DescripcionCausa"
+                                  class="form-control"
+                                  rows="3"></textarea>
+                        <span class="text-danger"
+                              data-valmsg-for="NuevaCausa.DescripcionCausa"
+                              data-valmsg-replace="true"></span>
+                    </div>
+
+                    <!-- Clasificación del impacto -->
+                    <div class="mb-3">
+                        <label class="form-label">Clasificación del impacto</label>
+                        <div class="btn-group" role="group">
+                            <input name="NuevaCausa.ClasificacionImpacto"
+                                   type="radio" value="0"
+                                   class="btn-check"
+                                   id="impactoOcurrencia" checked/>
+                            <label class="btn btn-outline-primary"
+                                   for="impactoOcurrencia">Ocurrencia</label>
+
+                            <input name="NuevaCausa.ClasificacionImpacto"
+                                   type="radio" value="1"
+                                   class="btn-check"
+                                   id="impactoNoDeteccion" />
+                            <label class="btn btn-outline-primary"
+                                   for="impactoNoDeteccion">No detección</label>
+                        </div>
+                        <span class="text-danger"
+                              data-valmsg-for="NuevaCausa.ClasificacionImpacto"
+                              data-valmsg-replace="true"></span>
+                    </div>
+
+                    <!-- Resultado de verificación -->
+                    <div class="mb-3">
+                        <label class="form-label">Resultado de verificación</label>
+                        <div class="btn-group" role="group">
+                            <input name="NuevaCausa.ResultadoVerificacion"
+                                   type="radio" value="0"
+                                   class="btn-check"
+                                   id="resNoOk"
+                                   checked/>
+                            <label class="btn btn-outline-primary"
+                                   for="resNoOk">NO OK</label>
+
+                            <input name="NuevaCausa.ResultadoVerificacion"
+                                   type="radio" value="1"
+                                   class="btn-check"
+                                   id="resOk" checked />
+                            <label class="btn btn-outline-primary"
+                                   for="resOk">OK</label>
+                        </div>
+                        <span class="text-danger"
+                              data-valmsg-for="NuevaCausa.ResultadoVerificacion"
+                              data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <hr class="hr-violeta-modal">
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnGuardarCausa" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal de advertencia personalizada -->
+<div class="modal fade paso0-modal-denegado" id="modalPermisoGuardar" tabindex="-1" aria-labelledby="modalPermisoGuardarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalPermisoGuardarLabel">
+                    Permiso denegado
+                </h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body custom-modal-body">
+                Solo el <b>piloto</b>, el <b>responsable</b> o un <b>supervisor</b> pueden guardar los cambios.
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de error para fechas -->
+<div class="modal fade" id="modalErrorFechas" tabindex="-1" aria-labelledby="modalErrorFechasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalErrorFechasLabel">
+                    Error en las fechas
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body">
+                La <b>fecha de inicio</b> debe ser menor o igual a la <b>fecha de fin</b>.<br>
+                Por favor, corregí las fechas para continuar.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de campos obligatorios faltantes -->
+<div class="modal fade" id="modalFaltanCampos" tabindex="-1" aria-labelledby="modalFaltanCamposLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="modalFaltanCamposLabel">Campos incompletos</h5>
+                <button type="button" class="btn-close custom-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta-modal">
+            <div class="modal-body custom-modal-body">
+            
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn-custom-secondary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="modalConfirmarEliminarCausa" tabindex="-1" aria-labelledby="modalConfirmEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmEliminarLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres eliminar esta causa?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmEliminar" class="btn btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/Paso2.js"></script>

@@ -1,0 +1,381 @@
+﻿
+/* ============================== */
+/* 🎨 COLORES BASE */
+/* ============================== */
+.bg-color-principal {
+    background-color: #141724;
+}
+
+.bg-color-secundario {
+    background-color: #1C202C !important;
+    color: #ffffff;
+}
+
+.bg-violeta-titulo {
+    background-color: #1C202C;
+}
+
+.codigo-box {
+    background-color: #48007B;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 1.1rem;
+}
+
+/* ============================== */
+/* 📐 LAYOUT */
+/* ============================== */
+.ficha-tecnica-wrapper {
+    background-color: #141724;
+    margin: 0 20px;
+}
+
+ 
+
+    .ficha-tecnica-wrapper .bg-color-secundario,
+    .small-box,
+    .info-box {
+        flex: 1;
+    }
+
+    /* ============================== */
+    /* 🔤 TIPOGRAFÍA Y TEXTO */
+    /* ============================== */
+    .ficha-tecnica-wrapper * {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+    }
+
+    .ficha-tecnica-wrapper h6,
+    .ficha-tecnica-wrapper p strong {
+        font-weight: bold;
+    }
+
+    .ficha-tecnica-wrapper p,
+    .ficha-tecnica-wrapper li {
+        font-size: 0.95rem;
+    }
+
+    .ficha-tecnica-wrapper h6 i {
+        color: #B28AFF;
+    }
+
+/* ============================== */
+/* 📦 CUADROS Y CAJAS */
+/* ============================== */
+.small-box {
+    font-size: 0.95rem;
+    padding: 1rem;
+    flex-grow: 0;
+}
+
+.info-box {
+    background-color: #1F2330;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+/* ============================== */
+/* 🗓️ INPUT FECHA */
+/* ============================== */
+.custom-date-input {
+    background-color: #141724;
+    border: none;
+    color: white;
+    padding-right: 2.2rem;
+    position: relative;
+}
+
+.custom-calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #48007B;
+    pointer-events: none;
+}
+
+/* ============================== */
+/* 🔗 LINKS */
+/* ============================== */
+.link-violeta {
+    color: #48007B;
+    font-size: 0.85rem;
+    text-decoration: underline;
+}
+
+a.text-decoration-underline.small {
+    font-size: 0.85rem;
+    color: #4da6ff;
+}
+
+/* ============================== */
+/* 📊 STEPS */
+/* ============================== */
+.steps-container {
+    background-color: #141724;
+    border-radius: 10px;
+}
+
+.step-box {
+    background-color: #1C202C;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 1rem;
+    transition: background 0.3s ease;
+    text-decoration: none;
+}
+
+    .step-box:hover {
+        background: linear-gradient(90deg, #48007B, #6B1FBF);
+        cursor: pointer;
+    }
+
+    .step-box .step-num {
+        font-size: 1.3rem;
+        width: 30px;
+        flex-shrink: 0;
+    }
+
+    .step-box .step-content {
+        flex-grow: 1;
+    }
+
+    .step-box .step-title {
+        color: #B28AFF;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+    }
+
+    .step-box .step-description {
+        font-size: 0.85rem;
+        color: #ccc;
+    }
+
+    .step-box .step-date {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 0.3rem;
+    }
+
+.step-highlight {
+    background: linear-gradient(90deg, #48007B, #6B1FBF);
+}
+
+/* ============================== */
+/* 🟪 MODAL */
+/* ============================== */
+.modal-desenfocado {
+    backdrop-filter: blur(12px);
+    background-color: rgba(28, 32, 44, 0.92);
+    border: 2px solid #48007B;
+    border-radius: 12px;
+}
+
+.modal-footer {
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    background-color: transparent !important;
+}
+
+.hr-violeta {
+    border: 0px;
+    border-top: 4px solid #48007B;
+    width: 100%;
+}
+
+.ficha-tecnica-wrapper .col-md-3 > div,
+.ficha-tecnica-wrapper .col-md-6 > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Botón “Asignar ficha técnica” más grande y contrastado */
+.btn-custom-asignar {
+    background-color: #48007B;
+    color: #fff !important;
+    font-weight: 600;
+    width: 90%; /* o 100%, como prefieras */
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-custom-asignar:hover {
+        background-color: #36005C; /* un poco más oscuro al pasar el mouse */
+    }
+
+
+#modalAsignarEquipo .form-select {
+    background-color: #212529;
+    color: #fff;
+    border: 1px solid #343a40;
+}
+
+    #modalAsignarEquipo .form-select:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #343a40;
+    }
+
+/* ============================= */
+/* Botones del modal: base + hover */
+/* ============================= */
+#modalAsignarEquipo .modal-footer .btn {
+    background-color: #1C123F;
+    color: #fff;
+    border: none;
+    transition: background 0.2s ease;
+}
+
+    #modalAsignarEquipo .modal-footer .btn:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+    }
+
+/* El <hr> violeta: */
+/* si ya tienes .hr-violeta, solo ajusta el color */
+.hr-violeta {
+    border: 0;
+    border-top: 3px solid #48007B; /* más grueso y violeta */
+    width: 100%;
+    margin: 0; /* elimino márgenes extra */
+}
+
+/* Blur al backdrop (fondo detrás del modal) */
+.modal-backdrop.show {
+    background-color: rgba(0, 0, 0, 0.5); /* semitransparente */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Blur y semitransparencia en el contenido del modal */
+#modalAsignarEquipo .modal-content {
+    background-color: rgba(33, 37, 41, 0.8); /* tu color + opacidad */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+#modalAsignarEquipo .modal-footer {
+    border-top: none;
+}
+
+/* Estilo base del date-picker */
+.custom-date-input {
+    background-color: #212529; /* fondo actual */
+    border: 1px solid #343a40; /* borde gris oscuro */
+    color: #fff;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+    /* Cuando esté enfocado o activo, lo hacemos aún más oscuro */
+    .custom-date-input:focus,
+    .custom-date-input:active {
+        background-color: #1a1c20; /* un pelín más oscuro que #212529 */
+        border-color: #343a40; /* mantiene el mismo color de borde */
+        outline: none; /* quita el outline azul/naranja */
+        box-shadow: none; /* quita cualquier sombra de foco */
+    }
+
+.steps-disabled {
+    pointer-events: none;
+    filter: blur(3px);
+    opacity: 0.5;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.step-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: #1C202C;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+    min-height: 110px;
+    overflow: hidden;
+    transition: background 0.3s ease;
+}
+
+    .step-box:hover {
+        background: linear-gradient(90deg, #48007B, #6B1FBF);
+        cursor: pointer;
+    }
+
+.step-num {
+    font-size: 1.3rem;
+    width: 30px;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex-grow: 1;
+}
+
+.step-title {
+    color: #B28AFF;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.step-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+}
+
+.step-accion-contencion {
+    font-weight: 500;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.step-fecha-responsable {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #aaa;
+    text-transform: none;
+}
+
+.step-fecha-inicio {
+    font-style: italic;
+}
+
+.step-responsable {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+
+
+
+
+
+
+
+
+
+

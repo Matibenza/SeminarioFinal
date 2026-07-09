@@ -1,0 +1,334 @@
+﻿/* ----------------------------------------------------
+   GENERAL: Colores y layout
+---------------------------------------------------- */
+
+/* Aplica color gris a todos los textos dentro del contenedor */
+.container-no-conformidades,
+.container-no-conformidades * {
+    color: #ccc !important;
+}
+
+/* Fondo y estilo para los dropdown y el input de fecha */
+.form-select,
+.form-control {
+    background-color: #141724;
+    color: #ccc;
+    border: 1px solid #141724;
+    height: 2.5rem;
+    line-height: 1.5;
+}
+.form-control, .form-select {
+    height: 2.5rem; /* Ajusta al valor que tenga tu .form-select por defecto */
+    line-height: 1.5;
+}
+
+/* Título principal */
+.no-conf-title {
+    color: #DFC0F0;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Contenedor de filtros */
+.no-conf-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+    .no-conf-filters label {
+        color: #ccc;
+    }
+
+/* Contenedor grande para la lista de no conformidades */
+.no-conf-list-container {
+    background-color: #1A1A1A;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+}
+
+/* Header dentro del contenedor de no conformidades para botones */
+.no-conf-list-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Tarjetas de no conformidades */
+.no-conf-card {
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+    border: none;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+    .no-conf-card h5 {
+        margin-bottom: 0.5rem;
+    }
+
+    .no-conf-card small {
+        opacity: 0.7;
+    }
+
+/* Tarjetas de fichas técnicas (degradado invertido) */
+.fichas-card {
+    background: linear-gradient(90deg, rgba(0,26,36,1) 0%, rgba(9,9,121,1) 45%, rgba(112,0,255,1) 100%); /* De izquierda a derecha */
+    border: none;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Ajuste responsivo para filtros */
+@media (max-width: 576px) {
+    .no-conf-filters {
+        flex-direction: column;
+    }
+}
+
+/* Inputs y selects con enfoque violeta */
+.form-select:focus,
+.form-control:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.25);
+    outline: none;
+}
+
+/* Opciones del <select> nativo */
+.form-select option {
+    background-color: #212529;
+    color: #fff;
+}
+
+    .form-select option:hover,
+    .form-select option:checked,
+    .form-select option:focus {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: #fff !important;
+    }
+
+/* ----------------------------------------------------
+   INPUT DE FECHA
+---------------------------------------------------- */
+input[type="date"] {
+    background-color: #141724 !important;
+    color: #ccc !important;
+    border: 1px solid #141724;
+}
+
+    input[type="date"]::-webkit-datetime-edit {
+        background-color: #141724;
+        color: #ccc;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+        background-color: #141724;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-text {
+        color: #ccc;
+    }
+
+    /* Ícono de calendario en Chrome/WebKit */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(42%) sepia(98%) saturate(2717%) hue-rotate(259deg) brightness(99%) contrast(101%);
+    }
+
+    input[type="date"]:focus {
+        background-color: #141724 !important;
+        color: #ccc !important;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.25);
+        border-color: #6a11cb;
+    }
+
+/* ----------------------------------------------------
+   CHOICES.JS: Estilos del dropdown custom
+---------------------------------------------------- */
+.choices {
+    background-color: #141724;
+    border: 1px solid #141724;
+}
+
+.choices__inner {
+    background-color: #141724;
+    border: none;
+}
+
+.choices__list--dropdown {
+    background-color: #141724 !important;
+    border: none;
+}
+
+.choices__list--search {
+    background-color: #141724 !important;
+    padding: 0.5rem 1rem;
+}
+
+    .choices__list--search .choices__input--cloned {
+        background-color: #141724 !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+        .choices__list--search .choices__input--cloned::placeholder {
+            color: #ccc;
+        }
+
+.choices__item--choice {
+    background-color: #141724;
+    color: #fff;
+    padding: 0.5rem 1rem;
+}
+
+    .choices__item--choice.is-highlighted {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: #fff !important;
+    }
+
+.choices__list--search input.choices__input--cloned {
+    background-color: #141724 !important;
+    color: #fff !important;
+    border: none !important;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Botón personalizado con color de fondo fijo y degradado en hover */
+.btn-custom-gradient {
+    background-color: #48007B;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+    cursor: pointer;
+}
+
+    .btn-custom-gradient:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+    }
+
+.custom-uniform {
+    height: 2.5rem !important;
+    padding: 0.375rem 0.75rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    background-color: #141724 !important;
+    color: #ccc !important;
+    border: 1px solid #141724 !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+
+.modal-content .modal-body p {
+    color: white; /* negro, por ejemplo */
+}
+
+/* Cambiar el color de fondo del modal */
+/* Sobrescribir el fondo del contenido del modal */
+.modal-content {
+    background-color: #141724 !important; /* Fondo oscuro */
+    border: none !important; /* Quitar borde */
+}
+
+/* Cambiar color de texto en el header, body y footer del modal */
+.modal-header .modal-title,
+.modal-body,
+.modal-footer {
+    color: #ffffff !important;
+}
+
+/* Cambiar el color del botón de cierre (la "X") */
+.btn-close {
+    filter: invert(100%); /* Hace que la X sea blanca */
+    /* O usa otro método si quieres un ícono personalizado */
+}
+
+/* Botones en el footer del modal */
+.modal-footer .btn {
+    background-color: #1C123F !important; /* Botones morados */
+    color: #ffffff !important;
+    border: none !important;
+}
+
+    /* Hover opcional para los botones */
+    .modal-footer .btn:hover {
+        background-color: #2a1d5a !important; /* Un tono más claro */
+    }
+
+/* Ajustar la opacidad del fondo detrás del modal (overlay) */
+.modal-backdrop.show {
+    opacity: 0.8; /* o el valor que desees para la transparencia */
+}
+
+/* Cambiar el borde inferior del header del modal */
+.modal-header {
+    border-bottom: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+}
+
+/* Cambiar el borde superior del footer del modal */
+
+
+/* Si deseas un borde alrededor de todo el modal */
+.modal-content {
+    border: 1px solid #1C123F !important;
+    box-shadow: 0 1px 5px 0 #1C123F;
+}
+
+.modal-footer button.boton-rojo {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+    .modal-footer button.boton-rojo:hover {
+        background-color: #c82333 !important;
+        border-color: #bd2130 !important;
+    }
+
+
+.blur-modal {
+    filter: blur(4px);
+    transition: filter 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+#selectSupervisor {
+    background-color: #212529 !important;
+    color: #fff !important;
+    border: 1px solid #141724;
+}
+
+    /* Por si usás el pseudo-elemento de las opciones también */
+    #selectSupervisor option {
+        background-color: #212529;
+        color: #fff;
+    }
+
+.btn-cancelar {
+    background-color: #1C123F;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+    .btn-cancelar:hover {
+        background: linear-gradient(90deg, #2575fc, #6a11cb);
+        color: #fff;
+    }
+
+
+.descripcion-no-conf {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

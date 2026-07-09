@@ -1,0 +1,450 @@
+﻿@using TesisPractica.Models
+@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@model TesisPractica.Models.FichaTecnica
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Paso 5 – Verificacion";
+
+}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="~/css/Paso5.css" asp-append-version="true" />
+
+<div class="paso0-page">
+    <!-- Barra de pasos -->
+    <div class="steps-bar">
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso0", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 0
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso1", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 1
+        </div>
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso2", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 2
+        </div>
+        <div class="step"
+             style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso3", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 3
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso4", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 4
+        </div>
+        <div class="step step-active">STEP 5</div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso6", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 6
+        </div>
+        <div class="step" style="cursor:pointer;"
+             onclick="location.href='@Url.Action("Index","Paso7", new { idFicha = Model.IdFichaTecnica })'">
+            STEP 7
+        </div>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div id="contenidoFondo" class="paso0-content @( (ViewBag.Paso2Terminado as bool? ?? false) ? "" : "blurred" )">
+        <div class="paso0-header">
+            <h2 class="paso0-title">VERIFICACIÓN</h2>
+         @*    @{
+                var fechaFinEstimada = Model.Paso3?.FechaFinEstimada;
+                string restante;
+
+                if (fechaFinEstimada == null || fechaFinEstimada <= DateTime.Now)
+                {
+                    restante = "0 horas";
+                }
+                else
+                {
+                    var diff = fechaFinEstimada.Value - DateTime.Now;
+
+                    if (diff.TotalDays >= 1)
+                    {
+                        var dias = (int)Math.Floor(diff.TotalDays);
+                        restante = dias + (dias == 1 ? " día" : " días");
+                    }
+                    else
+                    {
+                        var horas = (int)Math.Floor(diff.TotalHours);
+                        restante = horas + (horas == 1 ? " hora" : " horas");
+                    }
+                }
+            } *@
+
+            <div class="paso0-timer">
+                <span>TIEMPO RESTANTE</span>
+                <span class="timer-value"></span>
+            </div>
+        </div>
+
+        <hr class="hr-violeta" />
+
+        <form id="formPaso5" method="post" asp-action="Guardar" asp-route-idFicha="@Model.IdFichaTecnica">
+            <div class="bloque-verificacion">
+
+                <!-- MÉTODO -->
+                <div class="verificacion-bloque">
+                    <h5 class="verificacion-subtitulo">MÉTODO</h5>
+                    <div class="verificacion-fila">
+                        <div class="verificacion-col">
+                            <h6>FACILIDAD DE SEGUIMIENTO</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.FacilidadSeguimiento"
+                                       value="0"
+                                @(Model.Paso5?.FacilidadSeguimiento == 0 ? "checked" : "") />
+                                DIFÍCIL Y NECESITA ELEVADO CONOCIMIENTO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.FacilidadSeguimiento"
+                                       value="1"
+                                @(Model.Paso5?.FacilidadSeguimiento == 1 ? "checked" : "") />
+                                FÁCIL DE ENTENDER Y ELEVADO CONOCIMIENTO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.FacilidadSeguimiento"
+                                       value="2"
+                                @(Model.Paso5?.FacilidadSeguimiento == 2 ? "checked" : "") />
+                                FÁCIL DE ENTENDER Y POCO CONOCIMIENTO
+                            </label>
+                        </div>
+                        <div class="verificacion-col">
+                            <h6>INSTRUCCIONES</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Instrucciones"
+                                       value="0"
+                                @(Model.Paso5?.Instrucciones == 0 ? "checked" : "") />
+                                NECESARIO EL DESARROLLO DE HABILIDADES
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Instrucciones"
+                                       value="1"
+                                @(Model.Paso5?.Instrucciones == 1 ? "checked" : "") />
+                                DESARROLLO A VELOCIDAD DE LÍNEA CON DEFECTOS
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Instrucciones"
+                                       value="3"
+                                @(Model.Paso5?.Instrucciones == 3 ? "checked" : "") />
+                                FÁCIL DE REALIZAR EN LÍNEA DE PRODUCCIÓN
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MATERIA PRIMA -->
+                <div class="verificacion-bloque">
+                    <h5 class="verificacion-subtitulo">MATERIA PRIMA</h5>
+                    <div class="verificacion-fila">
+                        <div class="verificacion-col">
+                            <h6>ESTÁNDAR DE CALIDAD</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.EstandarCalidad"
+                                       value="0"
+                                @(Model.Paso5?.EstandarCalidad == 0 ? "checked" : "") />
+                                DEFINIDOS PERO NO EN LA ESTACIÓN DE TRABAJO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.EstandarCalidad"
+                                       value="1"
+                                @(Model.Paso5?.EstandarCalidad == 1 ? "checked" : "") />
+                                DEFINIDOS EN LA ESTACIÓN PERO NO SON CLAROS
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.EstandarCalidad"
+                                       value="2"
+                                @(Model.Paso5?.EstandarCalidad == 2 ? "checked" : "") />
+                                CLAROS Y VISIBLES EN LA ESTACIÓN DE TRABAJO
+                            </label>
+                        </div>
+                        <div class="verificacion-col">
+                            <h6>DEFECTOS</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Defectos"
+                                       value="0"
+                                @(Model.Paso5?.Defectos == 0 ? "checked" : "") />
+                                SE ENCUENTRAN EN NUESTRA PLANTA
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Defectos"
+                                       value="1"
+                                @(Model.Paso5?.Defectos == 1 ? "checked" : "") />
+                                RECHAZO DE PIEZAS EN EL CLIENTE
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Defectos"
+                                       value="2"
+                                @(Model.Paso5?.Defectos == 2 ? "checked" : "") />
+                                PROVEEDOR NO UTILIZA CONTROL VISUAL
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÁQUINA -->
+                <div class="verificacion-bloque">
+                    <h5 class="verificacion-subtitulo">MÁQUINA</h5>
+                    <div class="verificacion-fila">
+                        <div class="verificacion-col">
+                            <h6>PARÁMETROS CERO DEFECTOS</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.ParametrosCeroDefectos"
+                                       value="0"
+                                @(Model.Paso5?.ParametrosCeroDefectos == 0 ? "checked" : "") />
+                                DEFINIDOS PERO NO CONOCIDOS
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.ParametrosCeroDefectos"
+                                       value="1"
+                                @(Model.Paso5?.ParametrosCeroDefectos == 1 ? "checked" : "") />
+                                DEFINIDOS Y DISPONIBLES PARA CHEQUEO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.ParametrosCeroDefectos"
+                                       value="2"
+                                @(Model.Paso5?.ParametrosCeroDefectos == 2 ? "checked" : "") />
+                                DEFINIDOS Y CHEQUEO SIN HERRAMIENTAS ESPECIALES
+                            </label>
+                        </div>
+                        <div class="verificacion-col">
+                            <h6>VARIACIÓN</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Variacion"
+                                       value="0"
+                                @(Model.Paso5?.Variacion == 0 ? "checked" : "") />
+                                BAJA PROBABILIDAD DE DETECCIÓN
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Variacion"
+                                       value="1"
+                                @(Model.Paso5?.Variacion == 1 ? "checked" : "") />
+                                SISTEMA DE INSPECCIÓN PERIÓDICA LAS DETECTA
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.Variacion"
+                                       value="2"
+                                @(Model.Paso5?.Variacion == 2 ? "checked" : "") />
+                                MONITOREO CONTINUO PREVIO A INICIO DE DEFECTOS
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MANO DE OBRA -->
+                <div class="verificacion-bloque">
+                    <h5 class="verificacion-subtitulo">MANO DE OBRA</h5>
+                    <div class="verificacion-fila">
+                        <div class="verificacion-col">
+                            <h6>VARIACIÓN DEL TRABAJO</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.VariacionTrabajo"
+                                       value="0"
+                                @(Model.Paso5?.VariacionTrabajo == 0 ? "checked" : "") />
+                                VARÍA Y EL OPERARIO NO RECIBE AVISO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.VariacionTrabajo"
+                                       value="1"
+                                @(Model.Paso5?.VariacionTrabajo == 1 ? "checked" : "") />
+                                VARÍA Y EL OPERARIO RECIBE UN AVISO ACTIVO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.VariacionTrabajo"
+                                       value="2"
+                                @(Model.Paso5?.VariacionTrabajo == 2 ? "checked" : "") />
+                                LA ACTIVIDAD NO VARÍA
+                            </label>
+                        </div>
+                        <div class="verificacion-col">
+                            <h6>LIBERACIÓN DE DEFECTOS</h6>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.LiberacionDefectos"
+                                       value="0"
+                                @(Model.Paso5?.LiberacionDefectos == 0 ? "checked" : "") />
+                                NO HAY CONTROL DE DEFECTOS
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.LiberacionDefectos"
+                                       value="1"
+                                @(Model.Paso5?.LiberacionDefectos == 1 ? "checked" : "") />
+                                LOS CONTROLES DEPENDEN DE CONTROL DEL OPERARIO
+                            </label>
+                            <label class="verificacion-opcion">
+                                <input type="radio"
+                                       name="Paso5.LiberacionDefectos"
+                                       value="2"
+                                @(Model.Paso5?.LiberacionDefectos == 2 ? "checked" : "") />
+                                CONTROLES ROBUSTOS DEL TIPO POKA YOKE
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="hr-violeta" />
+            <div class="bottom-wrapper">
+                <div class="dates-row">
+                    <div class="date-field">
+                        <label asp-for="Paso5.FechaInicio" class="form-label fw-bold text-uppercase">
+                            FECHA DE INICIO
+                        </label>
+                        <input asp-for="Paso5.FechaInicio" id="FechaInicio" type="date" class="date-input" />
+
+                    </div>
+                    <div class="date-field">
+                        <label asp-for="Paso5.FechaFin" class="form-label fw-bold text-uppercase">
+                            FECHA FIN
+                        </label>
+                        <input asp-for="Paso5.FechaFin" id="FechaFin" type="date" class="date-input" />
+                    </div>
+                    <div class="date-field">
+                        <label asp-for="Paso5.FechaFinEstimada" class="form-label fw-bold text-uppercase">
+                            FECHA FIN ESTIMADA
+                        </label>
+                        <div class="date-input readonly-field">
+                            @Model.Paso5.FechaFinEstimada?.ToString("yyyy-MM-dd")
+                        </div>
+                        <input asp-for="Paso5.FechaFinEstimada" type="hidden" />
+                    </div>
+                </div>
+
+                <div class="combo-row">
+                    <div class="combo-field">
+                        <label asp-for="Paso5.Responsable">RESPONSABLE</label>
+                        <select asp-for="Paso5.Responsable"
+                                id="Responsable"
+                                class="form-select choices"
+                                asp-items="ViewBag.Responsables5"
+                                disabled="@(ViewBag.EsAuditor ? "disabled" : null)">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="Paso5.Responsable" class="text-danger"></span>
+                    </div>
+
+                    <div class="combo-field">
+                        <label asp-for="Paso5.IdEstado">ESTADO</label>
+                        <select asp-for="Paso5.IdEstado"
+                                id="IdEstado"
+                                class="form-select choices">
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var item in (SelectList)ViewBag.Estados5)
+                            {
+                                var isSelected = item.Value == Model.Paso5.IdEstado.ToString() ? "selected" : null;
+                                bool esPiloto = (bool)(ViewBag.EsPiloto ?? false);
+                                bool esSupervisor = (bool)(ViewBag.EsSupervisor ?? false);
+
+                                var isDisabled = !(esPiloto || esSupervisor) &&
+                                item.Text.Equals("Terminado", StringComparison.OrdinalIgnoreCase)
+                                ? "disabled" : null;
+
+                                <option value="@item.Value" selected="@isSelected" disabled="@isDisabled">
+                                    @item.Text
+                                </option>
+                            }
+
+                        </select>
+                        <span asp-validation-for="Paso5.IdEstado" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-4">
+                <a asp-controller="FichasTecnicas"
+                   asp-action="Detalle"
+                   asp-route-id="@Model.IdFichaTecnica"
+                   class="btn-custom-secondary">
+                    Cerrar
+                </a>
+                <button type="submit"
+                        id="btnGuardarPaso5"
+                        class="btn-custom-gradient @( (ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "no-permitido" )"
+                @((ViewBag.EsPiloto || ViewBag.EsResponsable || ViewBag.EsSupervisor) ? "" : "tabindex='-1'")>
+                    Guardar Paso 5
+                </button>
+            </div>
+
+        </form>
+
+    
+    </div>
+</div>
+
+<!-- Modal de error por fechas -->
+<div class="modal fade" id="modalErrorFechas" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body">La fecha de fin no puede ser anterior a la de inicio.</div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal de campos faltantes -->
+<div class="modal fade" id="modalFaltanCampos" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Campos obligatorios</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal de permiso denegado -->
+<div class="modal fade" id="modalPermisoGuardar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Permiso denegado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <hr class="hr-violeta" />
+            <div class="modal-body">No tenés permiso para guardar este paso.</div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/Paso5.js" asp-append-version="true"></script>

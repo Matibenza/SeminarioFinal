@@ -1,0 +1,519 @@
+@model IEnumerable<TesisPractica.Models.Equipo>
+@using Newtonsoft.Json
+@{
+    Layout = "~/Views/Shared/_LayoutSistema.cshtml";
+    ViewData["Title"] = "Equipos de trabajo";
+
+    var rol = ViewBag.RolUsuario as string;
+    var filtroPersona = Context.Request.Query["persona"].FirstOrDefault() ?? "";
+    var filtroFecha = Context.Request.Query["fecha"].FirstOrDefault() ?? "";
+}
+
+<!-- Enlazamos hojas de estilo -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="~/css/Equipos.css" asp-append-version="true" />
+
+<div class="container-fluid text-white py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 titulo-header-equipos">
+        <h2 class="m-0">Equipos de trabajo</h2>
+        @* Botón Crear sólo si es supervisor *@
+        @if (rol == "supervisor")
+        {
+            <button type="button" class="btn btn-gradient"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalCrearEquipo">
+                <i class="fas fa-plus me-2"></i> Crear nuevo equipo
+            </button>
+        }
+    </div>
+
+    <div class="contenedor-equipos">
+        <!-- ==== FILTROS ==== -->
+        <form method="get"
+              class="row g-3 align-items-center mb-4 filtros-equipos">
+            <div class="col-12 col-md-4">
+                @* Filtro "persona" para supervisor / "creador" para empleado *@
+                @if (rol == "supervisor")
+                {
+                    <select class="form-select" name="persona">
+                        <option value="">Filtrar por persona</option>
+                        @foreach (var emp in ViewBag.Empleados as List<TesisPractica.Models.Usuario>)
+                        {
+                            if (filtroPersona == emp.Id.ToString())
+                            {
+                                <option value="@emp.Id" selected>@emp.NombreUsuario</option>
+                            }
+                            else
+                            {
+                                <option value="@emp.Id">@emp.NombreUsuario</option>
+                            }
+                        }
+                    </select>
+                }
+                else
+                {
+                    <select class="form-select" name="persona">
+                        <option value="">Filtrar por creador</option>
+                        @foreach (var sup in ViewBag.Supervisores as List<TesisPractica.Models.Usuario>)
+                        {
+                            if (filtroPersona == sup.Id.ToString())
+                            {
+                                <option value="@sup.Id" selected>@sup.NombreUsuario</option>
+                            }
+                            else
+                            {
+                                <option value="@sup.Id">@sup.NombreUsuario</option>
+                            }
+                        }
+                    </select>
+                }
+            </div>
+            <div class="col-12 col-md-3">
+                <input type="date"
+                       class="form-control"
+                       name="fecha"
+                       value="@filtroFecha" />
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button type="submit" class="btn btn-gradient">Buscar</button>
+            </div>
+        </form>
+
+        <!-- ==== TABLA ==== -->
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+                <thead class="text-secondary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Piloto</th>
+                        @if (rol != "supervisor")
+                        {
+                            <th>Creador</th>
+                        }
+                        <th>Fecha de creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                No hay equipos disponibles.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var equipo in Model)
+                        {
+                            var piloto = equipo.EquiposUsuarios
+                            .FirstOrDefault(eu => eu.RolEnEquipo == "Piloto")
+                            ?.Usuario?.NombreUsuario ?? "-";
+
+                            var creador = equipo.Creador?.NombreUsuario ?? "-";
+                            var fechaCreacion = equipo.FechaCreacion.ToString("dd/MM/yyyy");
+                            var usuariosJson = JsonConvert.SerializeObject(
+                            equipo.EquiposUsuarios.Select(eu => new
+                            {
+                                id = eu.Usuario.Id,
+                                nombre = eu.Usuario.NombreUsuario,
+                                rol = eu.RolEnEquipo
+                            })
+                            );
+
+                            <tr class="fila-equipo"
+                                data-id="@equipo.IdEquipo"
+                                data-nombre="@equipo.Nombre"
+                                data-fechacreacion="@fechaCreacion"
+                                data-descripcion="@equipo.Descripcion"
+                                data-usuarios='@usuariosJson'>
+                                <td>@equipo.IdEquipo</td>
+                                <td>@equipo.Nombre</td>
+                                <td>@piloto</td>
+                                @if (rol != "supervisor")
+                                {
+                                    <td>@creador</td>
+                                }
+                                <td>@fechaCreacion</td>
+                            </tr>
+                        }
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--   MODAL CREAR EQUIPO (solo supervisor)       -->
+<!-- ============================================= -->
+@if (rol == "supervisor")
+{
+    <div class="modal fade modal-blur"
+         id="modalCrearEquipo"
+         tabindex="-1"
+         aria-labelledby="modalCrearEquipoLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content text-white modal-content-custom">
+                <div class="modal-header border-0">
+                    <div class="w-100">
+                        <h5 class="modal-title fw-bold"
+                            id="modalCrearEquipoLabel">
+                            Crear nuevo equipo
+                        </h5>
+                        <hr class="mt-2 mb-0 hr-purple" />
+                    </div>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCrearEquipo"
+                          method="post"
+                          asp-action="Crear">
+                        <div class="col-mb-3">
+                                <label for="Nombre" class="form-label">Nombre del equipo</label>
+                                <input type="text"
+                                       class="form-control input-custom"
+                                       id="Nombre"
+                                       name="nombre" autocomplete="off" />
+                         </div>
+                        <div class="mb-3">
+                            <label for="Descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control input-custom"
+                                      id="Descripcion"
+                                      name="descripcion"
+                                      rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Piloto" class="form-label">Seleccionar piloto</label>
+                            <select id="Piloto"
+                                    name="piloto"
+                                    class="form-select select-custom">
+                                <option value="">-- Seleccionar un piloto --</option>
+                                @foreach (var emp in ViewBag.Empleados as List<TesisPractica.Models.Usuario>)
+                                {
+                                    <option value="@emp.Id">@emp.NombreUsuario</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Auditores" class="form-label">Seleccionar auditores</label>
+                            <select id="Auditores"
+                                    name="auditores[]"
+                                    multiple>
+                                @foreach (var emp in ViewBag.Empleados as List<TesisPractica.Models.Usuario>)
+                                {
+                                    <option value="@emp.Id">@emp.NombreUsuario</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-gradient">Guardar equipo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<input type="hidden" id="idUsuarioActual" value="@ViewBag.UsuarioId" />
+
+
+<!-- ============================================= -->
+<!--   MODAL CAMPOS INCOMPLETOS                    -->
+<!-- ============================================= -->
+<div class="modal fade"
+     id="modalCamposIncompletos"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <div class="w-100">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Campos incompletos
+                    </h5>
+                    <hr class="hr-purple" />
+                </div>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body fw-semibold">
+                <!-- mensaje inyectado desde JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--   MODAL DETALLE/EDICIÓN DEL EQUIPO            -->
+<!-- ============================================= -->
+<div class="modal fade modal-blur"
+     id="modalDetalleEquipo"
+     tabindex="-1"
+     aria-labelledby="modalDetalleEquipoLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom"
+             data-rol="@rol">
+            <div class="modal-header border-0">
+                <div class="w-100">
+                    <h5 class="modal-title fw-bold"
+                        id="modalDetalleEquipoLabel">
+                        Información del equipo: <span id="detalleEquipo-nombre-titulo"></span>
+                    </h5>
+                    <hr class="hr-purple" />
+                </div>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- ID + Fecha -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <strong>ID:</strong> <span id="detalleEquipo-id-text"></span>
+                        <input type="hidden" id="detalleEquipo-id" />
+                    </div>
+                    <div class="col-6">
+                        <strong>Fecha de creación:</strong> <span id="detalleEquipo-fecha"></span>
+                    </div>
+                </div>
+                <!-- Nombre + Descripción -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <strong>Nombre:</strong> <span id="detalleEquipo-nombre"></span>
+                        @if (rol == "supervisor")
+                        {
+                            <a href="#"
+                               id="btnModificarNombreLink"
+                               class="ms-2 text-decoration-underline"
+                               style="color:#82858F;">
+                                Modificar
+                            </a>
+                        }
+                    </div>
+                    <div class="col-6">
+                        <strong>Descripción:</strong> <span id="detalleEquipo-descripcion"></span>
+                        @if (rol == "supervisor")
+                        {
+                            <a href="#"
+                               id="btnModificarDescripcionLink"
+                               class="ms-2 text-decoration-underline"
+                               style="color:#82858F;">
+                                Modificar
+                            </a>
+                        }
+                    </div>
+                </div>
+                <!-- No conformidades -->
+                <div class="mb-4 p-3 mx-auto" style="max-width:600px; border:1px solid #3A3F5A; border-radius:8px;">
+                    <h5 class="fw-bold text-center mb-3">LISTADO DE FICHAS TÉCNICAS ASOCIADAS</h5>
+                      <table class="table table-dark table-hover align-middle mb-0">
+                        <thead class="text-secondary">
+                            <tr><th>ID FT</th><th>ID NC</th><th>Fecha creación</th></tr>
+                        </thead>
+                        <tbody id="ft-table-body">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Sin fichas técnicas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="hr-purple mb-4"/>
+                <!-- Lista de usuarios asignados -->
+                <div id="listaUsuariosAsignados"></div>
+                <hr class="hr-purple mb-4 mt-4" />
+                <!-- Agregar usuario (solo supervisor) -->
+                @if (rol == "supervisor")
+                {
+                    <div id="seccionAgregarUsuario" class="d-flex align-items-center gap-2 mb-3">
+                        <label for="selectAgregarUsuario" class="mb-0">Agregar usuario:</label>
+                        <select id="selectAgregarUsuario" class="form-select flex-grow-1 select-rol select-custom">
+                            <option value="">-- Seleccione un empleado --</option>
+                            @foreach (var emp in ViewBag.Empleados as List<TesisPractica.Models.Usuario>)
+                            {
+                                <option value="@emp.Id">@emp.NombreUsuario</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer d-flex justify-content-end gap-2">
+                @if (rol == "supervisor")
+                {
+
+                    <button type="button" id="btnAsignarFichaTecnica" class="btn btn-gradient"> Asignar ficha técnica </button>
+
+                    <button type="button" id="btnDesasignarFichaTecnica" class="btn btn-gradient"> Desasignar ficha técnica </button>
+
+                    <button type="button" id="btnGuardarCambios" class="btn btn-gradient"> Modificar </button>
+             
+                    <button type="button"  id="btnEliminarEquipo"  class="btn btn-danger"> Eliminar </button>
+                }
+                else
+                {
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--   MODAL ASIGNAR FICHA TÉCNICA                 -->
+<!-- ============================================= -->
+<div class="modal fade modal-blur" id="modalAsignarFT" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">
+                    Asignar ficha técnica al equipo <span id="asignarFT-equipo-nombre"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <hr class="hr-purple" />
+            <div class="modal-body">
+                <select id="selectFTsinAsignar" class="form-select select-custom">
+                    <option value="">— Cargando… —</option>
+                </select>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmarAsignarFT" class="btn btn-gradient">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!--   MODAL DESASIGNAR FICHA TÉCNICA              -->
+<!-- ============================================= -->
+<div class="modal fade modal-blur" id="modalDesasignarFT" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="modalDesasignarFTLabel">
+                    Desasignar ficha técnica del equipo <span id="desasignarFT-equipo-nombre"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <hr class="hr-purple" />
+            <div class="modal-body">
+                <select id="selectFTasignadas" class="form-select select-custom">
+                    <option>— Cargando… —</option>
+                </select>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmarDesasignarFT" class="btn btn-gradient">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade modal-blur"
+     id="modalConfirmarEliminar"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Confirmar eliminación</h5>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="textoConfirmarEliminar">
+                    ¿Seguro que quieres eliminar el equipo <strong></strong>?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <!-- AQUI: btn-gradient en lugar de btn-secondary -->
+                <button type="button"
+                        class="btn btn-gradient"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button"
+                        id="btnConfirmarEliminar"
+                        class="btn btn-danger">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- MODAL MODIFICAR NOMBRE -->
+<div class="modal fade" id="modalModificarNombre" tabindex="-1" aria-labelledby="modalModificarNombreLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="modalModificarNombreLabel">Modificar nombre del equipo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="txtNuevoNombreEquipo" class="form-label">Nuevo nombre</label>
+                <input type="text" id="txtNuevoNombreEquipo" class="form-control input-custom" autocomplete="off" />
+                <div id="errorNombreEquipo" class="text-danger small mt-2 d-none">
+                    Ese nombre ya está en uso.
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmarNuevoNombre" class="btn btn-gradient">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="idUsuarioActual" value="@ViewBag.UsuarioId" />
+
+<!-- MODAL MODIFICAR DESCRIPCIÓN -->
+<div class="modal fade" id="modalModificarDescripcion" tabindex="-1" aria-labelledby="modalModificarDescripcionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white modal-content-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="modalModificarDescripcionLabel">Modificar descripción del equipo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="txtNuevaDescripcionEquipo" class="form-label">Nueva descripción</label>
+                <textarea id="txtNuevaDescripcionEquipo" class="form-control input-custom" rows="3"></textarea>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-gradient" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmarNuevaDescripcion" class="btn btn-gradient">Guardar</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</>
+
+@if (TempData["EquipoCreado"] != null)
+{
+    <input type="hidden" id="equipoCreadoExito" value="@TempData["EquipoCreado"]" />
+}
+
+@if (!string.IsNullOrEmpty(Context.Request.Query["mensaje"].FirstOrDefault()))
+{
+    <input type="hidden" id="mensajeAsignacionFT" value="@Context.Request.Query["mensaje"]" />
+}
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="~/js/Equipos.js" asp-append-version="true"></script>
