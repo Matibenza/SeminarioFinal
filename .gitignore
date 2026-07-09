@@ -3,20 +3,77 @@
 bin/
 obj/
 
-# Archivos comprimidos / backups
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+# .NET / NuGet
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.artifacts/
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Logs / temp
+*.log
+*.tmp
+*.cache
+~$*
+*~
+
+# Visual Studio / tooling
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# SQL Server / backups / compressed files
 *.rar
 *.zip
 *.bak
-!database/SeminarioFinal.bak
-*.sql
+*.mdf
+*.ldf
+*.ndf
 
-# Archivos de usuario de Visual Studio
-*.csproj.user
-*.suo
-*.user
+# Si querés subir específicamente este backup, dejá esta excepción
+!database/SeminarioFinal.bak
+
+# Scripts SQL viejos o accidentales
+*.sql
 
 # Archivo accidental
 git reset --hard 8544781
 
-# Si ese archivo "Tesis" no es parte del c�digo, ignorarlo
+# Archivo grande local que no forma parte del código
 Tesis
+
+# Config sensible
+# Si el appsettings tiene contraseñas reales, descomentá estas líneas:
+# appsettings.json
+# appsettings.Development.json
