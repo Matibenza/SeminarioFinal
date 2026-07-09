@@ -4,6 +4,12 @@ Sistema web desarrollado como prototipo tecnológico para la gestión de no conf
 
 El sistema permite registrar no conformidades, gestionar fichas técnicas, asignar equipos de trabajo, definir responsables, realizar el seguimiento de acciones correctivas y consultar indicadores relacionados con el estado de los procesos de calidad.
 
+## Video demostrativo
+
+El video demostrativo del uso del sistema no se incluye como archivo dentro del repositorio debido a su tamaño. Para evitar que el repositorio quede excesivamente pesado, se deja disponible mediante el siguiente enlace externo:
+
+https://drive.google.com/drive/folders/1zOQJGakrCyV-mAd-3uacGEqF4dcBzxjA?usp=drive_link
+
 ## Tecnologías utilizadas
 
 * ASP.NET Core Razor Pages
